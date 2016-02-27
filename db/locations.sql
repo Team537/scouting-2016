@@ -19,5 +19,6 @@ VALUES
 ('Neutral Zone Right'),
 ('Tower Right'),
 ('Tower Center'),
-('Tower Left')
+('Tower Left'),
+('Spy Box')
 ;

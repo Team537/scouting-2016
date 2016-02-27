@@ -4,7 +4,7 @@ INSERT INTO `scouting2016`.`actions`
 (`action_name`,
 `points`)
 VALUES
-('Start', 0),
+('Start Match', 0),
 ('High Goal', 5),
 ('Low Goal', 2),
 ('Reach', 5),
@@ -19,5 +19,7 @@ VALUES
 ('Cross Rough Terrain (D)', 5),
 ('Cross Low Bar', 5),
 ('Challange', 5),
-('Scale', 15)
+('Scale', 15),
+('Boulder Drop', 0),
+('Defended Robot', 0)
 ;
