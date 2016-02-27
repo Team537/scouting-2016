@@ -1,0 +1,184 @@
+<html lang="en" ng-app="scouting" ng-controller="homepage">
+    <head>
+        <title>Scouting</title>
+    </head>
+    <style>
+        body{
+            padding: 0;
+            margin: 0;
+            font-family: sans-serif;
+        }
+        #contianer{
+            width: 1280px;
+            height: 800px;
+            background: #474747;
+            overflow: hidden;
+        }
+            #home_screen{
+                width: 1280px;
+                height: 800px;
+            }
+        #title_screen{
+            width: 1280px;
+            height: 500px;
+            background: #e41e26;
+            box-shadow: 0px 0px 10px #000;
+            border-bottom: thin solid #000;
+            position: relative;
+        }
+            #title_screen #title{
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                height: 213px;
+                margin-top: -106.5px;
+                margin-left: -394px;
+            }
+        
+        #login_inputs{
+            height: 200px;
+            width: 930px;
+            margin: auto;
+            margin-top: 40px;
+            position: relative;
+        }
+        #login_inputs input{ width: 458px; height: 68px; padding-left: 10px; font-size: 50px; border: thin solid #cccccc; float: left; }
+        
+        #ready_button{
+            background: #34aa49;
+            border-radius: 10px;
+            margin-top: 30px;
+            width: 930px;
+            height: 98px;
+            position: absolute;
+            bottom: 10px;
+            box-shadow: 0px 6px 0px #2a803f;
+            color: #2a803f;
+        }
+        #ready_button:hover{
+            color: #fff;
+            background: #2a803f;
+            box-shadow: inset 0px 0px 5px #000;
+        }
+        #ready_button div{ width: 930px; height: 98px; display: table-cell; vertical-align: middle; text-align: center; font-size: 80px; font-weight: bold; }
+        
+        
+        h1,h2,h3,h4,h5,p {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+    <body>
+        <div id="contianer">
+            
+            <div id="home_screen">
+                <div id="title_screen">
+                    
+                    <div id="title">
+                        <img style="float: left;" height="213px" src="images/team537_gear.png" />
+                        <div style="border-left: 3px solid #000; color: #fff; padding-left: 20px; margin-left: 20px; float: left; margin-top: 64px;">
+                            <h3 style="font-size: 30px; margin-left: 43px; margin-bottom: -23px;">2016</h3>
+                            <h1 style="font-size: 70px;">Scouting System</h1>
+                        </div>
+                    </div>
+                    
+                    <h3 ng-if="waiting == true" style="color: #fff; width: 100%; position: absolute; bottom: 30px; font-size: 30px; text-align: center;">Waiting for admin command...</h3>
+                </div>
+                <div id="login_inputs">
+                    <input ng-model="first_name" placeholder="First Name" type="text" />
+                    <input ng-model="last_name" style="margin-left: 14px;" placeholder="Last Name" type="text" />
+                    <div ng-click="scouter_login()" id="ready_button"><div>READY</div></div>
+                </div>
+            </div>
+            
+        </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/socket.io-1.4.5.js"></script>
+          
+    <script>
+        var app = angular.module('scouting', []);
+        app.controller('homepage', function ($scope, socket) {
+            $scope.first_name = '';
+            $scope.last_name = '';
+            
+            $scope.waiting = 'false';
+            
+            $scope.current_match = 00;
+            $scope.server_status = 'off';
+            
+            socket.on('connect',function(){
+               $scope.server_status = 'on'; 
+            });
+            
+            socket.on('disconnect',function(){
+                console.log('disconnected');
+                $scope.server_status = 'off';
+            });
+            
+            setTimeout(function(){
+                if($scope.server_status == 'on'){
+                    setTimeout(function(){
+                        $('#start_screen').animate({'opacity':0.0},400);
+                        $('#header').animate({'height':'80px'},700);
+                        setTimeout(function(){
+                            $('#header').css({'position':'relative'});
+                           $('#header .container,.container').animate({'opacity':'1.0'}); 
+                        },700);
+                    },2000);
+                }
+            },900);
+            
+            
+            
+            
+            
+            $scope.scouter_login = function(){
+                //validate login_inputs
+                console.log('click');
+                if($scope.first_name && $scope.last_name){
+                    $('#login_inputs').css({'display':'none'});
+                    $('#title_screen').animate({'height':'700px'},700);
+                    $scope.waiting = true;
+                    console.log($scope.first_name);
+                    socket.emit('scouter_connect',{'fN':$scope.first_name,'lN':$scope.last_name});
+                }
+                
+            };
+            
+            socket.on('prepare_match',function(data){
+               $('#title_screen').animate({'height':'0px'}); 
+            });
+            
+            socket.on('scouter_disconnect',function(data){
+                 console.log(data);
+            });
+        });
+        
+        
+        app.factory('socket', function ($rootScope) {
+        var socket = io.connect('localhost:80');
+        return {
+        on: function (eventName, callback) {
+        socket.on(eventName, function () {
+            var args = arguments;
+            $rootScope.$apply(function () {
+                callback.apply(socket, args);
+            });
+        });
+        },
+        emit: function (eventName, data, callback) {
+        socket.emit(eventName, data, function () {
+            var args = arguments;
+            $rootScope.$apply(function () {
+                if (callback) {
+                    callback.apply(socket, args);
+                }
+            });
+        })
+        }
+        };
+        });
+    </script>
+    </body>
+</html>
