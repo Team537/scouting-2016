@@ -8,6 +8,8 @@ var io = require('socket.io').listen(server);
 var connected_users = [];
 
 var mysql      = require('mysql');
+
+
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
@@ -109,13 +111,18 @@ var root = "C:\wamp64\www";
 app.use('/images', express.static(__dirname + '/images'));
 app.use('/scouting', express.static(__dirname + '/scouting'));
 app.use('/js', express.static(__dirname + '/js'));
+app.use('/css', express.static(__dirname + '/css'));
 
 app.get('/', function (req, res, next) {
     console.log(req.app.server);
-    res.sendfile('C:/wamp64/www/scouting/index.html');
+    res.sendfile('./scouting/index.html');
+});
+app.get('/admin', function (req, res, next) {
+    console.log(req.app.server);
+    res.sendfile('./index.html');
 });
 
 
 server.listen('80', function () {
-    console.log('Serving latest png on port 80 ...');
+    console.log('Server on port 80');
 });
