@@ -1,6 +1,7 @@
 {
   "name": "scouting-2016",
   "version": "1.0.0",
+  "description": "",
   "main": "server.js",
   "dependencies": {},
   "devDependencies": {
@@ -22,6 +23,5 @@
   "bugs": {
     "url": "https://github.com/team537/scouting-2016/issues"
   },
-  "homepage": "https://github.com/team537/scouting-2016#readme",
-  "description": ""
+  "homepage": "https://github.com/team537/scouting-2016#readme"
 }

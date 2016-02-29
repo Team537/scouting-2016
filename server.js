@@ -14,8 +14,7 @@ var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
   password : '',
-  database: 'scouting2016',
-    debug: true
+  database : 'scouting2016'
 });
 
 function Shuffle(o) {
@@ -30,26 +29,26 @@ io.on('connect',function(socket){
         connection.query('SELECT * FROM matches', function(err, rows, fields) {
           if (err) throw err;
           io.to('admin').emit('response',{'response':'CurrentMatch','data':rows[0]});
-          console.log('Response:  ', rows[0]);
+          console.log('The solution is: ', rows[0]);
         });
     });
     
     socket.on('next_match',function(data){
-        connection.query('SELECT * FROM matches WHERE match_number="'+data+'"', function(err, rows, fields) {
+        connection.query('SELECT * FROM matches WHERE matchno="'+data+'"', function(err, rows, fields) {
           if (err) throw err;
           if(rows[0] !== undefined){
             io.to('admin').emit('response',{'response':'NextMatch','data':rows[0]});
           }else{
               io.to('admin').emit('response',{'response':'NextMatch','data':'null'});
           }
-          console.log('Response:  ', rows[0]);
+          console.log('The solution is: ', rows[0]);
         });        
     });
     socket.on('prev_match',function(data){
-        connection.query('SELECT * FROM matches WHERE match_number="'+data+'"', function(err, rows, fields) {
+        connection.query('SELECT * FROM matches WHERE matchno="'+data+'"', function(err, rows, fields) {
           if (err) throw err;
           io.to('admin').emit('response',{'response':'NextMatch','data':rows[0]});
-          console.log('Response:  ', rows[0]);
+          console.log('The solution is: ', rows[0]);
         });         
     });
     
@@ -107,17 +106,19 @@ io.on('connect',function(socket){
     
 });
 
+var root = "C:\wamp64\www";
+
 app.use('/images', express.static(__dirname + '/images'));
 app.use('/scouting', express.static(__dirname + '/scouting'));
 app.use('/js', express.static(__dirname + '/js'));
 app.use('/css', express.static(__dirname + '/css'));
 
 app.get('/', function (req, res, next) {
-    console.log('sent file');
-    res.sendfile('./scouting/index.html');
+    console.log(req.app.server);
+    res.sendfile('./scouting.html');
 });
 app.get('/admin', function (req, res, next) {
-    console.log('');
+    console.log(req.app.server);
     res.sendfile('./index.html');
 });
 

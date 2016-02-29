@@ -116,8 +116,9 @@
             $scope.current_match = 00;
             $scope.server_status = 'off';
             
-            socket.on('connect',function(){
-               $scope.server_status = 'on'; 
+            socket.on('connection',function(){
+                $scope.server_status = 'on';
+                alert('connected');
             });
             
             socket.on('disconnect',function(){
