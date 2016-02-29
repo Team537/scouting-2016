@@ -115,7 +115,7 @@ app.use('/css', express.static(__dirname + '/css'));
 
 app.get('/', function (req, res, next) {
     console.log(req.app.server);
-    res.sendfile('./scouting/field.html');
+    res.sendfile('./scouting.html');
 });
 app.get('/admin', function (req, res, next) {
     console.log(req.app.server);
