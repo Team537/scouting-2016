@@ -13,7 +13,7 @@ var mysql      = require('mysql');
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  password : '',
+  password : 'Robots537',
   database : 'scouting2016'
 });
 
@@ -108,6 +108,15 @@ io.on('connect',function(socket){
 
 var root = "C:\wamp64\www";
 
+var options = {
+    root: __dirname,
+    dotfiles: 'deny',
+    headers: {
+        'x-timestamp': Date.now(),
+        'x-sent': true
+    }
+};
+
 app.use('/images', express.static(__dirname + '/images'));
 app.use('/scouting', express.static(__dirname + '/scouting'));
 app.use('/js', express.static(__dirname + '/js'));
@@ -115,11 +124,11 @@ app.use('/css', express.static(__dirname + '/css'));
 
 app.get('/', function (req, res, next) {
     console.log(req.app.server);
-    res.sendfile('./scouting/field.html');
+    res.sendFile('./scouting/field.html', options);
 });
 app.get('/admin', function (req, res, next) {
     console.log(req.app.server);
-    res.sendfile('./index.html');
+    res.sendFile('./index.html', options);
 });
 
 
