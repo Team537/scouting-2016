@@ -76,6 +76,83 @@
             padding: 0;
             margin: 0;
         }
+
+
+
+        /*Scouting portion*/
+        #scouting-container{
+            position: absolute;
+            top: 0;
+            z-index:-1;
+        }
+        #title_bar{
+            background: #e8e8e8;
+            height: 60px;
+            width: 1024px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0px 0px 5px #000;
+        }
+        #field-diagram-table {
+            width: 1024px;
+            height: 433px;
+            border-collapse: separate; 
+            border-spacing: 2px; 
+            background-color:#273F2E;
+            margin:0;
+            padding: 0;
+        }
+        #field-diagram-table td {
+            height: 75px;
+            vertical-align: middle;
+            margin:0;
+        }        
+        #field-diagram-table td a {
+            display:block;
+            width:100%;
+            height: 100%;
+            text-align: center;
+            color: #fff;
+        }
+        #field-diagram-table td a div {
+            position: relative;
+            top: 39%;
+        }
+        
+        .field-column-header { width: 100px; }
+        #field-diagram-table td.blue-outline { border: 2px solid blue; }
+        #field-diagram-table td.white-outline { border: 2px solid white; }
+        #field-diagram-table td.blue-defense { background-color: blue; border: 2px solid yellow; }
+        #field-diagram-table td.red-outline { border: 2px solid red; }
+        #field-diagram-table td.red-defense { background-color: red; border: 2px solid yellow; }
+
+        #scouting_team{
+            float: left;
+            margin: 4px 0px 0px 10px;
+            border: thin solid #333;
+            padding: 0px 20px;
+            font-size: 30px;
+        }
+        #scouter_name{
+            float: right;
+            height: 30px;
+            font-size: 30px;
+            margin: 10px 10px 0 0;
+        }
+
+        #scouter_time{
+            font-size: 30px;
+            position: absolute;
+            left: 50%;
+            top: 10px;
+        }
+        #scouter-time-bar{
+            width: 100%;
+            height: 10px;
+            background: #333;
+            position: absolute;
+            bottom: 0px;
+        }
     </style>
     <body>
         <div id="contianer">
@@ -100,7 +177,52 @@
                 </div>
             </div>
             
+            <div id="scouting-container">
+                <div id="title_bar">
+                    <div class="{{ scouting_data.scouting_team.alliance }}" id="scouting_team">{{ scouting_data.scouting_team.number }}</div>
+                    <div id="scouter_name">{{ first_name }} {{ last_name }}</div>
+                    <div id="scouter_time">00:00</div>
+                    <div id="scouter-time-bar"></div>
+                </div>
+                <table id="field-diagram-table">
+                    <tr>
+                        <td class="blue-outline"><a href="#" id="field-blue-brattice"><div>BB</div></a></td>
+                        <td class="blue-outline" colspan="2"><a href="#" id="field-blue-passage"><div>BP</div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="3"><a href="#" id="field-far-neutral"><div>FN</div></a></td>
+                        <td class="red-defense"><a href="#" id="field-red-d1"><div>R1</div></a></td>
+                        <td class="white-outline" rowspan="2" colspan="2"><a href="#" id="field-red-tower-left"><div>RTL</div></a></td>
+                    </tr>
+                    <tr>
+                        <td class="white-outline" colspan="2"><a href="#" id="field-blue-tower-right"><div>BTL</div></a></td>
+                        <td class="blue-defense"><a href="#" id="field-blue-d5"><div>B5</div></a></td>
+                        <td class="red-defense"><a href="#" id="field-red-d2"><div>R2</div></a></td>
+                    </tr>
+                    <tr>
+                        <td class="white-outline" colspan="2" rowspan="2"><a href="#" id="field-blue-tower-center"><div>BTC</div></a></td>
+                        <td class="blue-defense"><a href="#" id="field-blue-d4"><div>B4</div></a></td>
+                        <td class="red-defense"><a href="#" id="field-red-d3"><div>R3</div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="2"><a href="#" id="field-red-tower-center"><div>RTC</div></a></td>
+                    </tr>
+                    <tr>
+                        <td class="blue-defense"><a href="#" id="field-blue-d3"><div>B3</div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="3"><a href="#" id="field-near-neutral"><div>NN</div></a></td>
+                        <td class="red-defense"><a href="#" id="field-red-d4"><div>R4</div></a></td>
+                    </tr>
+                    <tr>
+                        <td class="white-outline" colspan="2" rowspan="2"><a href="#" id="field-blue-tower-left"><div>BTL</div></a></td>
+                        <td class="blue-defense"><a href="#" id="field-blue-d2"><div>B2</div></a></td>
+                        <td class="red-defense"><a href="#" id="field-red-d5"><div>R5</div></a></td>
+                        <td class="white-outline" colspan="2"><a href="#" id="field-red-tower-right"><div>RTR</div></a></td>
+                    </tr>
+                    <tr>
+                        <td class="blue-defense"><a href="#" id="field-blue-d1"><div>B1</div></a></td>
+                        <td class="red-outline" colspan="2"><a href="#" id="field-red-passage"><div>RP</div></a></td>
+                        <td class="red-outline"><a href="#" id="field-red-brattice"><div>RB</div></a></td>
+                    </tr>
+                </table>
+            </div>
         </div>
+
     <script src="js/jquery.min.js"></script>
     <script src="js/angular.min.js"></script>
     <script src="js/socket.io-1.4.5.js"></script>
@@ -156,7 +278,11 @@
             };
             
             socket.on('prepare_match',function(data){
-               $('#title_screen').animate({'height':'0px'}); 
+                $('#title_screen').animate({ 'height': '0px' });
+                $('#scouting-container').css({ 'z-index': '1' });
+                $scope.scouting_data = data;
+                console.log(data.scouting_team);
+                
             });
             
             socket.on('scouter_disconnect',function(data){
@@ -166,7 +292,7 @@
         
         
         app.factory('socket', function ($rootScope) {
-        var socket = io.connect('localhost:80');
+        var socket = io.connect();
         return {
         on: function (eventName, callback) {
         socket.on(eventName, function () {
