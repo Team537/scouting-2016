@@ -13,7 +13,7 @@ var mysql      = require('mysql');
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  password : '',
+  password: 'Robots537',
   database : 'scouting2016'
 });
 
@@ -123,6 +123,6 @@ app.get('/admin', function (req, res, next) {
 });
 
 
-server.listen('80','192.168.1.131', function () {
+server.listen('80', function () {
     console.log('Server on port 80');
 });
