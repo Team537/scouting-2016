@@ -13,7 +13,7 @@ var mysql      = require('mysql');
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  password : 'Robots537',
+  password: 'Robots537',
   database : 'scouting2016'
 });
 
@@ -81,20 +81,20 @@ io.on('connect',function(socket){
     
     socket.on('prepare_match',function(data){
         teams = [];
-        teams.push(data.current_match.blue1);
-        teams.push(data.current_match.blue2);
-        teams.push(data.current_match.blue3);
-        teams.push(data.current_match.red1);
-        teams.push(data.current_match.red2);
-        teams.push(data.current_match.red3);
+        teams.push({'number':data.current_match.blue1,'alliance':'blue'});
+        teams.push({ 'number': data.current_match.blue2, 'alliance': 'blue' });
+        teams.push({ 'number': data.current_match.blue3, 'alliance': 'blue' });
+        teams.push({ 'number': data.current_match.red1, 'alliance': 'red' });
+        teams.push({ 'number': data.current_match.red2, 'alliance': 'red' });
+        teams.push({ 'number': data.current_match.red3, 'alliance': 'red' });
         Shuffle(teams);
        i=0;
        while(i <= 5){
-           console.log(teams[i]);
            if(connected_users[i]){
             fn = connected_users[i].fN;
             ln = connected_users[i].lN;
-            io.to(fn+'_'+ln).emit('prepare_match',data);
+               console.log(teams[i]);
+               io.to(fn+'_'+ln).emit('prepare_match',{'response':data,'scouting_team':teams[i]});
            }
            
            i++;
@@ -108,15 +108,6 @@ io.on('connect',function(socket){
 
 var root = "C:\wamp64\www";
 
-var options = {
-    root: __dirname,
-    dotfiles: 'deny',
-    headers: {
-        'x-timestamp': Date.now(),
-        'x-sent': true
-    }
-};
-
 app.use('/images', express.static(__dirname + '/images'));
 app.use('/scouting', express.static(__dirname + '/scouting'));
 app.use('/js', express.static(__dirname + '/js'));
@@ -124,11 +115,11 @@ app.use('/css', express.static(__dirname + '/css'));
 
 app.get('/', function (req, res, next) {
     console.log(req.app.server);
-    res.sendFile('./scouting/field.html', options);
+    res.sendfile('./scouting/index.html');
 });
 app.get('/admin', function (req, res, next) {
     console.log(req.app.server);
-    res.sendFile('./index.html', options);
+    res.sendfile('./index.html');
 });
 
 
