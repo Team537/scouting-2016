@@ -11,12 +11,12 @@
         #contianer{
             width: 1024px;
             height: 528px;
-            background: #474747;
             overflow: hidden;
         }
             #home_screen{
                 width: 1024px;
                 height: 388px;
+                position: relative;
             }
         #title_screen{
             width: 1024px;
@@ -25,6 +25,7 @@
             box-shadow: 0px 0px 10px #000;
             border-bottom: thin solid #000;
             position: relative;
+            z-index: 1;
         }
             #title_screen #title{
                 position: absolute;
@@ -34,7 +35,12 @@
                 margin-top: -106.5px;
                 margin-left: -394px;
             }
-        
+        #login_inputs-container{
+            width: 1024px;
+            height: 271px;
+            position: absolute;
+            background: #474747;
+        }
         #login_inputs{
             height: 200px;
             width: 930px;
@@ -42,7 +48,7 @@
             margin-top: 40px;
             position: relative;
         }
-        #login_inputs input{ width: 458px; height: 55px; padding-left: 10px; font-size: 42px; border: thin solid #cccccc; float: left; }
+        #login_inputs input{ width: 458px; height: 70px; padding-left: 10px; font-size: 50px; border: thin solid #cccccc; float: left; }
         
         #ready_button{
             background: #34aa49;
@@ -83,7 +89,7 @@
         #scouting-container{
             position: absolute;
             top: 0;
-            z-index:-1;
+            z-index:1;
         }
         #title_bar{
             background: #e8e8e8;
@@ -133,6 +139,14 @@
             padding: 0px 20px;
             font-size: 30px;
         }
+        .red{
+            background: red;
+            color: #fff;
+        }
+        .blue{
+            background: blue;
+            color: #fff;
+        }
         #scouter_name{
             float: right;
             height: 30px;
@@ -142,9 +156,9 @@
 
         #scouter_time{
             font-size: 30px;
-            position: absolute;
-            left: 50%;
-            top: 10px;
+            width: 100%;
+            padding-top: 10px;
+            text-align: center;
         }
         #scouter-time-bar{
             width: 100%;
@@ -153,10 +167,105 @@
             position: absolute;
             bottom: 0px;
         }
+    #overlay{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background: #000;
+        opacity: 0.3;
+        z-index: 5;
+    }
+    #lightbox{
+        background: #cccccc;
+        height: 300px;
+        width: 582px;
+        position: absolute;
+        z-index: 5;
+        left: 50%;
+        top: 50%;
+        margin-left: -291px;
+        margin-top: -150px;
+    }
+        #lightbox #title{
+            width: 582px;
+            height: 70px;
+            background: #474747;
+            position: relative;
+        }
+        #lightbox #button{
+            background: #ebebeb;
+            color: #4c4c4d;
+            border-radius: 5px;
+            box-shadow: 0px 3px 0px #bcbcbc;
+            font-size: 30px;
+            font-weight: 400;
+            padding: 5px 10px;
+            text-align: center;
+            margin: 10px 10px;
+        }
+        #lightbox #button:hover{
+            box-shadow: inset 0px 0px 5px #000;
+            background: #4c4c4d;
+            color: #fff;
+        }
+            #lightbox #title_container{
+                position: relative;
+            }
+            #lightbox #title_container div{
+                width: 100%;
+                text-align: center;
+                color: #fff;
+                position: absolute;
+                bottom: 10px;
+                font-size: 25px;
+            }
     </style>
     <body>
         <div id="contianer">
+          
+            <div ng-click="close_lightbox()" id="overlay"></div>  
+            <div id="lightbox">
+                <div id="title">
+                    <div id="title_container" style="float: left; width: 33%; height: 100%; border-right: thin solid #ccc;">
+                        <img style="position: absolute; left: -3px; bottom: 4px;" width="100px;" src="images/Defenses/C-2.png" />
+                        <div style="left: 40px; top: 10px;">Defense</div>
+                        <div style="left: 43px; top: 38px; font-size: 16px;">Auto/Teleop</div>
+                    </div>
+                    <div id="title_container" style="float: left; width: 33%; height: 100%; border-right: thin solid #ccc;">
+                        <img style="position: absolute; left: 10px; bottom: 5px;" src="images/tower_png.png" />
+                        <div style="left: 33px; top: 10px;">Tower</div>
+                        <div style="left: 43px; top: 38px; font-size: 16px;">Shot attempt</div>
+                    </div>
+                    <div id="title_container" style="float: left; width: 33%; height: 100%;">
+                        <img style="position: absolute; left: 5px; bottom: -3px;" src="images/tablet.png" />
+                        <div style="left: 40px; top: 4px;">Scouter<br/>Actions</div>
+                        <div style="left: 43px; top: 38px; font-size: 16px;"></div>
+                    </div>
+                </div>
+                <div style="position: relative; height: 100%; width: 100%;">
+                    
+                    <div style="width: 33%; border-right: thin solid #333; float: left; height: 230px;" id="column">
+                        <div id="button">Reached</div>
+                        <div id="button">Crossed</div>
+                        
+                    </div>
+
+                    <div style="width: 33%; border-right: thin solid #333; float: left; height: 230px;" id="column">
+                        <div id="button">High Goal</div>
+                        <div id="button">Low Goal</div>
+                        <div id="button">Success</div>
+                        <div id="button">Fail</div>
+                    </div>
+
+                    <div style="width: 33%; float: left; height: 230px;" id="column">
+                        <div id="button">Done</div>
+                        <div id="button">Cancel</div>
+                    </div>
+
+                </div>
+            </div>
             
+              
             <div id="home_screen">
                 <div id="title_screen">
                     
@@ -170,10 +279,12 @@
                     
                     <h3 ng-if="waiting == true" style="color: #fff; width: 100%; position: absolute; bottom: 30px; font-size: 30px; text-align: center;">Waiting for admin command...</h3>
                 </div>
-                <div id="login_inputs">
-                    <input ng-model="first_name" placeholder="First Name" type="text" />
-                    <input ng-model="last_name" style="margin-left: 14px;" placeholder="Last Name" type="text" />
-                    <div ng-click="scouter_login()" id="ready_button"><div>READY</div></div>
+                <div id="login_inputs-container">
+                    <div id="login_inputs">
+                        <input ng-model="first_name" placeholder="First Name" type="text" />
+                        <input ng-model="last_name" style="margin-left: 14px;" placeholder="Last Name" type="text" />
+                        <div ng-click="scouter_login()" id="ready_button"><div>READY</div></div>
+                    </div>
                 </div>
             </div>
             
@@ -186,7 +297,7 @@
                 </div>
                 <table id="field-diagram-table">
                     <tr>
-                        <td class="blue-outline"><a href="#" id="field-blue-brattice"><div>BB</div></a></td>
+                        <td class="blue-outline"><a ng-click="lightbox()" href="#" id="field-blue-brattice"><div>BB</div></a></td>
                         <td class="blue-outline" colspan="2"><a href="#" id="field-blue-passage"><div>BP</div></a></td>
                         <td class="white-outline" colspan="2" rowspan="3"><a href="#" id="field-far-neutral"><div>FN</div></a></td>
                         <td class="red-defense"><a href="#" id="field-red-d1"><div>R1</div></a></td>
@@ -278,13 +389,24 @@
             };
             
             socket.on('prepare_match',function(data){
-                $('#title_screen').animate({ 'height': '0px' });
-                $('#scouting-container').css({ 'z-index': '1' });
+                $('#home_screen').animate({ 'top': '-675px' });
+                setTimeout(function () {
+                    $('#scouting-container').css({ 'z-index': '1' });
+                },900);
                 $scope.scouting_data = data;
                 console.log(data.scouting_team);
                 
             });
             
+
+
+            $scope.lightbox = function (){
+                $('#lightbox, #overlay').css({'display':'block'})
+            }
+            $scope.close_lightbox = function () {
+                $('#lightbox, #overlay').css({'display':'none'})
+            }
+
             socket.on('scouter_disconnect',function(data){
                  console.log(data);
             });
