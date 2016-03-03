@@ -174,20 +174,22 @@
         background: #000;
         opacity: 0.3;
         z-index: 5;
+        display: none;
     }
     #lightbox{
         background: #cccccc;
         height: 300px;
-        width: 582px;
+        width: 800px;
         position: absolute;
         z-index: 5;
         left: 50%;
         top: 50%;
-        margin-left: -291px;
+        margin-left: -400px;
         margin-top: -150px;
+        display: none;
     }
         #lightbox #title{
-            width: 582px;
+            width: 800px;
             height: 70px;
             background: #474747;
             position: relative;
@@ -197,7 +199,7 @@
             color: #4c4c4d;
             border-radius: 5px;
             box-shadow: 0px 3px 0px #bcbcbc;
-            font-size: 30px;
+            font-size: 20px;
             font-weight: 400;
             padding: 5px 10px;
             text-align: center;
@@ -219,6 +221,11 @@
                 bottom: 10px;
                 font-size: 25px;
             }
+            .active{
+                background: #ee2724!important;
+                box-shadow: inset 0px 0px 10px #000!important;
+                color: #fff!important;
+            }
     </style>
     <body>
         <div id="contianer">
@@ -226,40 +233,64 @@
             <div ng-click="close_lightbox()" id="overlay"></div>  
             <div id="lightbox">
                 <div id="title">
-                    <div id="title_container" style="float: left; width: 33%; height: 100%; border-right: thin solid #ccc;">
-                        <img style="position: absolute; left: -3px; bottom: 4px;" width="100px;" src="images/Defenses/C-2.png" />
+                    <div ng-if="lb_change == 'climb'" id="title_container" style="float: left; width: 25%; height: 100%; border-right: thin solid #ccc;">
+                        <img style="position: absolute; left: 10px; bottom: 4px;" src="images/tower_png.png"" />
+                        <div style="left: 40px; top: 10px;">Tower</div>
+                        <div style="left: 43px; top: 38px; font-size: 16px;">Final</div>
+                    </div>
+
+                    <div ng-if="lb_change !== 'climb'" id="title_container" style="float: left; width: 25%; height: 100%; border-right: thin solid #ccc;">
+                        <img style="position: absolute; left: -3px; bottom: 4px;" width="100px" src="images/Defenses/C-2.png" />
                         <div style="left: 40px; top: 10px;">Defense</div>
                         <div style="left: 43px; top: 38px; font-size: 16px;">Auto/Teleop</div>
                     </div>
-                    <div id="title_container" style="float: left; width: 33%; height: 100%; border-right: thin solid #ccc;">
+                    <div id="title_container" style="float: left; width: 25%; height: 100%; border-right: thin solid #ccc;">
                         <img style="position: absolute; left: 10px; bottom: 5px;" src="images/tower_png.png" />
                         <div style="left: 33px; top: 10px;">Tower</div>
                         <div style="left: 43px; top: 38px; font-size: 16px;">Shot attempt</div>
                     </div>
-                    <div id="title_container" style="float: left; width: 33%; height: 100%;">
+                    <div id="title_container" style="float: left; width: 25%; height: 100%; border-right: thin solid #ccc;">
+                        <img style="position: absolute; left: 15px; bottom: -9px;" width="142px" src="images/robit.png" />
+                        <div style="left: 0px; top: 4px;">Robot Actions</div>
+                        <div style="left: 43px; top: 38px; font-size: 16px;"></div>
+                    </div>
+                    <div id="title_container" style="float: left; width: 24%; height: 100%;">
                         <img style="position: absolute; left: 5px; bottom: -3px;" src="images/tablet.png" />
-                        <div style="left: 40px; top: 4px;">Scouter<br/>Actions</div>
+                        <div style="left: 40px; top: 4px;">Scouter<br />Actions</div>
                         <div style="left: 43px; top: 38px; font-size: 16px;"></div>
                     </div>
                 </div>
-                <div style="position: relative; height: 100%; width: 100%;">
+                <div style="position: relative; width: 100%;">
                     
-                    <div style="width: 33%; border-right: thin solid #333; float: left; height: 230px;" id="column">
+                    <div ng-if="lb_change == 'climb'" style="width: 25%; border-right: thin solid #333; float: left; height: 230px;" id="column">
+                        <div ng-click="tower.climb = (tower.climb==false ? true : false); tower.challenge = false" ng-class="{'active': tower.climb, 'not_active': !tower.climb}" id="button">Climbed</div>
+                        <div ng-click="tower.challenge = (tower.challenge==false ? true : false); tower.climb = false" ng-class="{'active': tower.challenge, 'not_active': !tower.challenge}" id="button">Challenged</div>
+
+                        <div ng-class="{'active': tower.left, 'not_active': !tower.left}" style="font-size: 17px; float: left; margin-right: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-right: 1px solid #ccc;" id="button">Left</div>
+                        <div ng-class="{'active': tower.front, 'not_active': !tower.front}" style="font-size: 17px; border-radius: 0px; float: left; margin-right: 0px; margin-left: 0px;" id="button">Front</div>
+                        <div ng-class="{'active': tower.right, 'not_active': !tower.right}" style="font-size: 17px; float: left; margin-left: 0px; border-bottom-left-radius: 0px; border-top-left-radius: 0px; border-left: 1px solid #ccc;" id="button">Right</div>
+                    </div>
+
+                    <div ng-if="lb_change !== 'climb'" style="width: 25%; border-right: thin solid #333; float: left; height: 230px;" id="column">
                         <div id="button">Reached</div>
                         <div id="button">Crossed</div>
-                        
                     </div>
 
-                    <div style="width: 33%; border-right: thin solid #333; float: left; height: 230px;" id="column">
-                        <div id="button">High Goal</div>
-                        <div id="button">Low Goal</div>
-                        <div id="button">Success</div>
-                        <div id="button">Fail</div>
+                    <div style="width: 25%; border-right: thin solid #333; float: left; height: 230px;" id="column">
+                        <div ng-click="tower.high_goal = (tower.high_goal==false ? true : false); tower.low_goal=false;" ng-class="{'active': tower.high_goal, 'not_active': !tower.high_goal}" id="button">High Goal</div>
+                        <div ng-click="tower.low_goal = (tower.low_goal==false ? true : false); tower.high_goal=false" ng-class="{'active': tower.low_goal, 'not_active': !tower.low_goal}" id="button">Low Goal</div>
+                        <div ng-click="tower.success = (tower.success==false ? true : false); tower.fail=false" ng-class="{'active': tower.success, 'not_active': !tower.success}" id="button">Success</div>
+                        <div ng-click="tower.fail = (tower.fail==false ? true : false); tower.success=false" ng-class="{'active': tower.fail, 'not_active': !tower.fail}" id="button">Fail</div>
                     </div>
 
-                    <div style="width: 33%; float: left; height: 230px;" id="column">
-                        <div id="button">Done</div>
-                        <div id="button">Cancel</div>
+                    <div style="width: 25%; float: left; height: 230px; border-right: thin solid #333;" id="column">
+                        <div id="button">Defended Bot</div>
+                        <div id="button">Collected Boulder</div>
+                        <div id="button">Passed Boulder</div>
+                    </div>
+                    <div style="width: 24%; float: left; height: 230px;" id="column">
+                        <div id="button">Submit</div>
+                        <div ng-click="close_lightbox()" id="button">Cancle</div>
                     </div>
 
                 </div>
@@ -298,37 +329,37 @@
                 <table id="field-diagram-table">
                     <tr>
                         <td class="blue-outline"><a ng-click="lightbox()" href="#" id="field-blue-brattice"><div>BB</div></a></td>
-                        <td class="blue-outline" colspan="2"><a href="#" id="field-blue-passage"><div>BP</div></a></td>
-                        <td class="white-outline" colspan="2" rowspan="3"><a href="#" id="field-far-neutral"><div>FN</div></a></td>
-                        <td class="red-defense"><a href="#" id="field-red-d1"><div>R1</div></a></td>
-                        <td class="white-outline" rowspan="2" colspan="2"><a href="#" id="field-red-tower-left"><div>RTL</div></a></td>
+                        <td class="blue-outline" colspan="2"><a ng-click="lightbox()" href="#" id="field-blue-passage"><div>BP</div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="3"><a ng-click="lightbox()" href="#" id="field-far-neutral"><div>FN</div></a></td>
+                        <td class="red-defense"><a ng-click="lightbox()" href="#" id="field-red-d1"><div>R1</div></a></td>
+                        <td class="white-outline" rowspan="2" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtl'})" href="#" id="field-red-tower-left"><div>RTL</div></a></td>
                     </tr>
                     <tr>
-                        <td class="white-outline" colspan="2"><a href="#" id="field-blue-tower-right"><div>BTL</div></a></td>
-                        <td class="blue-defense"><a href="#" id="field-blue-d5"><div>B5</div></a></td>
-                        <td class="red-defense"><a href="#" id="field-red-d2"><div>R2</div></a></td>
+                        <td class="white-outline" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'btl'})" href="#" id="field-blue-tower-right"><div>BTL</div></a></td>
+                        <td class="blue-defense"><a ng-click="lightbox()" href="#" id="field-blue-d5"><div>B5</div></a></td>
+                        <td class="red-defense"><a ng-click="lightbox()" href="#" id="field-red-d2"><div>R2</div></a></td>
                     </tr>
                     <tr>
-                        <td class="white-outline" colspan="2" rowspan="2"><a href="#" id="field-blue-tower-center"><div>BTC</div></a></td>
-                        <td class="blue-defense"><a href="#" id="field-blue-d4"><div>B4</div></a></td>
-                        <td class="red-defense"><a href="#" id="field-red-d3"><div>R3</div></a></td>
-                        <td class="white-outline" colspan="2" rowspan="2"><a href="#" id="field-red-tower-center"><div>RTC</div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'btc'})" href="#" id="field-blue-tower-center"><div>BTC</div></a></td>
+                        <td class="blue-defense"><a ng-click="lightbox()" href="#" id="field-blue-d4"><div>B4</div></a></td>
+                        <td class="red-defense"><a ng-click="lightbox()" href="#" id="field-red-d3"><div>R3</div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtc'})" href="#" id="field-red-tower-center"><div>RTC</div></a></td>
                     </tr>
                     <tr>
-                        <td class="blue-defense"><a href="#" id="field-blue-d3"><div>B3</div></a></td>
-                        <td class="white-outline" colspan="2" rowspan="3"><a href="#" id="field-near-neutral"><div>NN</div></a></td>
-                        <td class="red-defense"><a href="#" id="field-red-d4"><div>R4</div></a></td>
+                        <td class="blue-defense"><a ng-click="lightbox()" href="#" id="field-blue-d3"><div>B3</div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="3"><a ng-click="lightbox()" href="#" id="field-near-neutral"><div>NN</div></a></td>
+                        <td class="red-defense"><a ng-click="lightbox()" href="#" id="field-red-d4"><div>R4</div></a></td>
                     </tr>
                     <tr>
-                        <td class="white-outline" colspan="2" rowspan="2"><a href="#" id="field-blue-tower-left"><div>BTL</div></a></td>
-                        <td class="blue-defense"><a href="#" id="field-blue-d2"><div>B2</div></a></td>
-                        <td class="red-defense"><a href="#" id="field-red-d5"><div>R5</div></a></td>
-                        <td class="white-outline" colspan="2"><a href="#" id="field-red-tower-right"><div>RTR</div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="2"><a  ng-click="lightbox({'tower': true,'feild_pos':'btl'})"href="#" id="field-blue-tower-left"><div>BTL</div></a></td>
+                        <td class="blue-defense"><a ng-click="lightbox()" href="#" id="field-blue-d2"><div>B2</div></a></td>
+                        <td class="red-defense"><a ng-click="lightbox()" href="#" id="field-red-d5"><div>R5</div></a></td>
+                        <td class="white-outline" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtr'})" href="#" id="field-red-tower-right"><div>RTR</div></a></td>
                     </tr>
                     <tr>
-                        <td class="blue-defense"><a href="#" id="field-blue-d1"><div>B1</div></a></td>
-                        <td class="red-outline" colspan="2"><a href="#" id="field-red-passage"><div>RP</div></a></td>
-                        <td class="red-outline"><a href="#" id="field-red-brattice"><div>RB</div></a></td>
+                        <td class="blue-defense"><a ng-click="lightbox()" href="#" id="field-blue-d1"><div>B1</div></a></td>
+                        <td class="red-outline" colspan="2"><a ng-click="lightbox()" href="#" id="field-red-passage"><div>RP</div></a></td>
+                        <td class="red-outline"><a ng-click="lightbox()" href="#" id="field-red-brattice"><div>RB</div></a></td>
                     </tr>
                 </table>
             </div>
@@ -341,6 +372,21 @@
     <script>
         var app = angular.module('scouting', []);
         app.controller('homepage', function ($scope, socket) {
+
+            //set everything to false.
+            $scope.tower = {};
+            $scope.tower.climb = false;
+            $scope.tower.challenge = false;
+            $scope.tower.left = false;
+            $scope.tower.front = false;
+            $scope.tower.right = false;
+
+            $scope.tower.high_goal = false;
+            $scope.tower.low_goal = false;
+
+            $scope.tower.success = false;
+            $scope.tower.fail = false;
+
             $scope.first_name = '';
             $scope.last_name = '';
             
@@ -400,8 +446,29 @@
             
 
 
-            $scope.lightbox = function (){
-                $('#lightbox, #overlay').css({'display':'block'})
+            $scope.lightbox = function (data) {
+
+                $scope.tower.climb = false;
+                $scope.tower.challenge = false;
+                $scope.tower.left = false;
+                $scope.tower.front = false;
+                $scope.tower.right = false;
+
+                $scope.tower.high_goal = false;
+                $scope.tower.low_goal = false;
+
+                $scope.tower.success = false;
+                $scope.tower.fail = false;
+
+                $('#lightbox, #overlay').css({ 'display': 'block' })
+                if (data.tower == true) {
+                    $scope.lb_change = 'climb';
+                    if (data.feild_pos == 'rtl' || data.feild_pos == 'btl') { $scope.tower.left = true; }
+                    if (data.feild_pos == 'rtc' || data.feild_pos == 'btc') { $scope.tower.front = true; }
+                    if (data.feild_pos == 'rtr' || data.feild_pos == 'btr') { $scope.tower.right = true; }
+                } else {
+
+                }
             }
             $scope.close_lightbox = function () {
                 $('#lightbox, #overlay').css({'display':'none'})
