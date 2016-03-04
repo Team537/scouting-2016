@@ -112,6 +112,7 @@
             height: 75px;
             vertical-align: middle;
             margin:0;
+            text-decoration: none;
         }        
         #field-diagram-table td a {
             display:block;
@@ -119,6 +120,7 @@
             height: 100%;
             text-align: center;
             color: #fff;
+            text-decoration: none;
         }
         #field-diagram-table td a div {
             position: relative;
@@ -226,6 +228,21 @@
                 box-shadow: inset 0px 0px 10px #000!important;
                 color: #fff!important;
             }
+
+
+
+            #time-bar{
+                height: 10px;
+                width: 0px;
+                background: #34aa49;
+                box-shadow: inset 0px 0px 5px #000;
+            }
+            .yellow{                                                    
+                background: yellow!important;
+            }
+            .red{
+                background: red!important;
+            }
     </style>
     <body>
         <div id="contianer">
@@ -272,8 +289,8 @@
                     </div>
 
                     <div ng-if="lb_change !== 'climb'" style="width: 25%; border-right: thin solid #333; float: left; height: 230px;" id="column">
-                        <div id="button">Reached</div>
-                        <div id="button">Crossed</div>
+                        <div ng-click="defense.reached = (defense.reached==false ? true : false); defense.crossed=false;" ng-class="{'active': defense.reached, 'not_active': !defense.reached}" id="button">Reached</div>
+                        <div ng-click="defense.crossed = (defense.crossed==false ? true : false); defense.reached=false;" ng-class="{'active': defense.crossed, 'not_active': !defense.crossed}" id="button">Crossed</div>
                     </div>
 
                     <div style="width: 25%; border-right: thin solid #333; float: left; height: 230px;" id="column">
@@ -284,9 +301,9 @@
                     </div>
 
                     <div style="width: 25%; float: left; height: 230px; border-right: thin solid #333;" id="column">
-                        <div id="button">Defended Bot</div>
-                        <div id="button">Collected Boulder</div>
-                        <div id="button">Passed Boulder</div>
+                        <div ng-click="robotAction.defended = (robotAction.defended==false ? true : false); robotAction.collect=false; robotAction.passed=false;" ng-class="{'active': robotAction.defended, 'not_active': !robotAction.defended}" id="button">Defended Bot</div>
+                        <div ng-click="robotAction.defended=false; robotAction.collect = (robotAction.collect==false ? true : false); robotAction.passed=false;" ng-class="{'active': robotAction.collect, 'not_active': !robotAction.collect}" id="button">Collected Boulder</div>
+                        <div ng-click="robotAction.defended=false; robotAction.collect=false; robotAction.passed = (robotAction.passed==false ? true : false);" ng-class="{'active': robotAction.passed, 'not_active': !robotAction.passed}" id="button">Passed Boulder</div>
                     </div>
                     <div style="width: 24%; float: left; height: 230px;" id="column">
                         <div id="button">Submit</div>
@@ -323,43 +340,45 @@
                 <div id="title_bar">
                     <div class="{{ scouting_data.scouting_team.alliance }}" id="scouting_team">{{ scouting_data.scouting_team.number }}</div>
                     <div id="scouter_name">{{ first_name }} {{ last_name }}</div>
-                    <div id="scouter_time">00:00</div>
-                    <div id="scouter-time-bar"></div>
+                    <div id="scouter_time">{{ time.minutes }}:{{ time.seconds }}</div>
+                    <div id="scouter-time-bar">
+                        <div class="green" id="time-bar"></div>
+                    </div>
                 </div>
                 <table id="field-diagram-table">
                     <tr>
-                        <td class="blue-outline"><a ng-click="lightbox()" href="#" id="field-blue-brattice"><div>BB</div></a></td>
-                        <td class="blue-outline" colspan="2"><a ng-click="lightbox()" href="#" id="field-blue-passage"><div>BP</div></a></td>
-                        <td class="white-outline" colspan="2" rowspan="3"><a ng-click="lightbox()" href="#" id="field-far-neutral"><div>FN</div></a></td>
-                        <td class="red-defense"><a ng-click="lightbox()" href="#" id="field-red-d1"><div>R1</div></a></td>
-                        <td class="white-outline" rowspan="2" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtl'})" href="#" id="field-red-tower-left"><div>RTL</div></a></td>
+                        <td class="blue-outline"><a ng-click="lightbox()" href="#" id="field-blue-brattice"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="blue-outline" colspan="2"><a ng-click="lightbox()" href="#" id="field-blue-passage"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="3"><a ng-click="lightbox({'tower': false,'feild_pos':'FN'})" href="#" id="field-far-neutral"><div> &nbsp;&nbsp; </div></a></td>
+                        <td class="red-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B1'})" href="#" id="field-red-d1"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="white-outline" rowspan="2" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtl'})" href="#" id="field-red-tower-left"><div> &nbsp;  &nbsp; </div></a></td>
                     </tr>
                     <tr>
-                        <td class="white-outline" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'btl'})" href="#" id="field-blue-tower-right"><div>BTL</div></a></td>
-                        <td class="blue-defense"><a ng-click="lightbox()" href="#" id="field-blue-d5"><div>B5</div></a></td>
-                        <td class="red-defense"><a ng-click="lightbox()" href="#" id="field-red-d2"><div>R2</div></a></td>
+                        <td class="white-outline" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'btr'})" href="#" id="field-blue-tower-right"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="blue-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B5'})" href="#" id="field-blue-d5"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="red-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B2'})" href="#" id="field-red-d2"><div> &nbsp;  &nbsp; </div></a></td>
                     </tr>
                     <tr>
-                        <td class="white-outline" colspan="2" rowspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'btc'})" href="#" id="field-blue-tower-center"><div>BTC</div></a></td>
-                        <td class="blue-defense"><a ng-click="lightbox()" href="#" id="field-blue-d4"><div>B4</div></a></td>
-                        <td class="red-defense"><a ng-click="lightbox()" href="#" id="field-red-d3"><div>R3</div></a></td>
-                        <td class="white-outline" colspan="2" rowspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtc'})" href="#" id="field-red-tower-center"><div>RTC</div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'btc'})" href="#" id="field-blue-tower-center"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="blue-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B4'})" href="#" id="field-blue-d4"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="red-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B3'})" href="#" id="field-red-d3"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtc'})" href="#" id="field-red-tower-center"><div> &nbsp;  &nbsp; </div></a></td>
                     </tr>
                     <tr>
-                        <td class="blue-defense"><a ng-click="lightbox()" href="#" id="field-blue-d3"><div>B3</div></a></td>
-                        <td class="white-outline" colspan="2" rowspan="3"><a ng-click="lightbox()" href="#" id="field-near-neutral"><div>NN</div></a></td>
-                        <td class="red-defense"><a ng-click="lightbox()" href="#" id="field-red-d4"><div>R4</div></a></td>
+                        <td class="blue-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B3'})" href="#" id="field-blue-d3"><div> &nbsp; </div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="3"><a ng-click="lightbox({'tower': false,'feild_pos':'NN'})" href="#" id="field-near-neutral"><div> &nbsp;&nbsp;&nbsp;&nbsp;    </div></a></td>
+                        <td class="red-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B4'})" href="#" id="field-red-d4"><div> &nbsp;  &nbsp; </div></a></td>
                     </tr>
                     <tr>
-                        <td class="white-outline" colspan="2" rowspan="2"><a  ng-click="lightbox({'tower': true,'feild_pos':'btl'})"href="#" id="field-blue-tower-left"><div>BTL</div></a></td>
-                        <td class="blue-defense"><a ng-click="lightbox()" href="#" id="field-blue-d2"><div>B2</div></a></td>
-                        <td class="red-defense"><a ng-click="lightbox()" href="#" id="field-red-d5"><div>R5</div></a></td>
-                        <td class="white-outline" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtr'})" href="#" id="field-red-tower-right"><div>RTR</div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="2"><a  ng-click="lightbox({'tower': true,'feild_pos':'btl'})"href="#" id="field-blue-tower-left"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="blue-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B2'})" href="#" id="field-blue-d2"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="red-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'R5'})" href="#" id="field-red-d5"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="white-outline" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtr'})" href="#" id="field-red-tower-right"><div> &nbsp;  &nbsp; </div></a></td>
                     </tr>
                     <tr>
-                        <td class="blue-defense"><a ng-click="lightbox()" href="#" id="field-blue-d1"><div>B1</div></a></td>
-                        <td class="red-outline" colspan="2"><a ng-click="lightbox()" href="#" id="field-red-passage"><div>RP</div></a></td>
-                        <td class="red-outline"><a ng-click="lightbox()" href="#" id="field-red-brattice"><div>RB</div></a></td>
+                        <td class="blue-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B1'})" href="#" id="field-blue-d1"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="red-outline" colspan="2"><a ng-click="lightbox()" href="#" id="field-red-passage"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="red-outline"><a ng-click="lightbox()" href="#" id="field-red-brattice"><div> &nbsp;  &nbsp; </div></a></td>
                     </tr>
                 </table>
             </div>
@@ -383,9 +402,21 @@
 
             $scope.tower.high_goal = false;
             $scope.tower.low_goal = false;
-
             $scope.tower.success = false;
             $scope.tower.fail = false;
+
+            $scope.defense = {};
+            $scope.defense.crossed = true;
+            $scope.defense.reached = true;
+
+            $scope.robotAction = {};
+            $scope.robotAction.defended = false;
+            $scope.robotAction.collect = false;
+            $scope.robotAction.passed = false;
+
+            $scope.time = {};
+            $scope.time.minutes = 00;
+            $scope.time.seconds = 00;
 
             $scope.first_name = '';
             $scope.last_name = '';
@@ -443,8 +474,37 @@
                 console.log(data.scouting_team);
                 
             });
-            
 
+            bar_width = 1024 / 150;
+            t = 0;
+            $scope.start_match = function () {
+ 
+                t++;
+                if (t < 150) {
+                    setTimeout(function () {
+                        $scope.start_match();
+                    }, 1000);
+                } else {
+                    console.log('match');
+                }
+
+                if (t >= 120) { m = 2; s = t-120; } else { m = 0; s = t; }
+                if (t >= 60 && t < 120) { m = 1; s = t - 60; }
+
+                if (t <= 9 && s <= 9) { s = '0' + t; }
+                if (t > 60 && (t - 60) <= 9) { s = '0' + (t - 60); }
+                if (t >= 120 && (t - 120) <= 9) { s = '0' + (t - 120); }
+                if (s == 0) { s = '00'; }
+                console.log(m + ':' + s);
+                $('#scouter_time').html(m + ':' + s);
+                
+                console.log(t*bar_width);
+                $('#time-bar').animate({ 'width': t * bar_width + 'px' }, 1001);
+                if (t >= 120) { $('#time-bar').attr({ 'class': 'yellow' }); }
+                if (t >= 150) { $('#time-bar').attr({ 'class': 'red' }); }
+            }
+
+            $scope.start_match();
 
             $scope.lightbox = function (data) {
 
@@ -456,9 +516,15 @@
 
                 $scope.tower.high_goal = false;
                 $scope.tower.low_goal = false;
-
                 $scope.tower.success = false;
                 $scope.tower.fail = false;
+
+                $scope.defense.crossed = false;
+                $scope.defense.reached = false;
+
+                $scope.robotAction.defended = false;
+                $scope.robotAction.collect = false;
+                $scope.robotAction.passed = false;
 
                 $('#lightbox, #overlay').css({ 'display': 'block' })
                 if (data.tower == true) {
@@ -467,8 +533,10 @@
                     if (data.feild_pos == 'rtc' || data.feild_pos == 'btc') { $scope.tower.front = true; }
                     if (data.feild_pos == 'rtr' || data.feild_pos == 'btr') { $scope.tower.right = true; }
                 } else {
-
+                    $scope.lb_change = '';
                 }
+
+               
             }
             $scope.close_lightbox = function () {
                 $('#lightbox, #overlay').css({'display':'none'})
