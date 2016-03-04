@@ -4,6 +4,7 @@ var mysql = require('mysql');
 var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
+var _ = require('underscore');
 
 var connected_users = [];
 
@@ -81,9 +82,24 @@ io.on('connect',function(socket){
             io.to('admin').emit('connected_user',connected_users);
         }
     });
+  
+    //defense type function
+
+    function defense_type(type) {
+        if (type == 'A-1') { title = 'Portcullis'; }
+        if (type == 'A-2') { title = 'Cheval de Frise'; }
+        if (type == 'B-1') { title = 'Moat'; }
+        if (type == 'B-2') { title = 'Ramparts' }
+        if (type == 'C-1') { title = 'Drawbridge'; }
+        if (type == 'C-2') { title = 'Sally Port' }
+        if (type == 'D-1') { title = 'Rock Wall'; }
+        if (type == 'D-2') { title = 'Rough Terrain'; }
+        if (type == 'lowbar') { title = 'Low Bar'; }
+        return title;
+    }
     
-    
-    socket.on('prepare_match',function(data){
+    socket.on('prepare_match', function (data) {
+       console.log(data);
         teams = [];
         teams.push({'number':data.current_match.blue1,'alliance':'blue'});
         teams.push({ 'number': data.current_match.blue2, 'alliance': 'blue' });
@@ -92,19 +108,36 @@ io.on('connect',function(socket){
         teams.push({ 'number': data.current_match.red2, 'alliance': 'red' });
         teams.push({ 'number': data.current_match.red3, 'alliance': 'red' });
         Shuffle(teams);
-       i=0;
-       while(i <= 5){
-           if(connected_users[i]){
-            fn = connected_users[i].fN;
-            ln = connected_users[i].lN;
-               console.log(teams[i]);
-               io.to(fn+'_'+ln).emit('prepare_match',{'response':data,'scouting_team':teams[i]});
-           }
-           
-           i++;
-       }
+        i = 1;
+        defenses = {};
+        _.each(data.defenses, function (defenseType) {
+            if (i > 5) { type = 'blue' } else { type = 'red' }
+ 
+            defenseType = defense_type(defenseType);
+            if (i > 5) {
+                pos = i - 5;
+                type = 'blue'
+            } else {
+                pos = i;
+                type = 'red';
+            }
+            defenses[type + pos] = defenseType;
+            i++;
+        });
+        //console.log(defenses);
+        data.defenses = defenses;
+        console.log(connected_users);
+        i2 = 0;
+        connected_users.forEach(function (user) {
+                fn = user.fN;
+                ln = user.lN;
+                console.log(fn);
+                io.to(fn + '_' + ln).emit('prepare_match', { 'response': data, 'scouting_team': teams[i2] });
+
+            i2++;
+        });
         
-        console.log(teams);
+        //console.log(teams);
         
     });
     

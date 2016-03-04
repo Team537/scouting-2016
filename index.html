@@ -428,7 +428,9 @@
                 $scope.current_match.redD4 = $scope.rDefence4;
                 $scope.current_match.redD5 = $scope.rDefence5;
 
-                data = {'current_match':$scope.current_match}
+                defenses = { 'RedD1': 'lowbar', 'RedD2': $scope.current_match.redD2, 'RedD3': $scope.current_match.redD3, 'RedD4': $scope.current_match.redD4, 'RedD5': $scope.current_match.redD5, 'BlueD1': 'lowbar', 'BlueD2': $scope.current_match.blueD2, 'BlueD3': $scope.current_match.blueD3, 'BlueD4': $scope.current_match.blueD4, 'BlueD5': $scope.current_match.blueD5 };
+
+                data = {'current_match':$scope.current_match, 'defenses':defenses}
                 console.log(JSON.stringify(data));
                 socket.emit('prepare_match',data);
             }
