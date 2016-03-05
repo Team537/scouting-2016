@@ -266,6 +266,24 @@
                 background: #ccc;
                 z-index: 1;
             }
+#title_bar #button{
+background: #ebebeb;
+color: #ccc;
+border-radius: 5px;
+box-shadow: 0px 3px 0px #bcbcbc;
+font-size: 20px;
+font-weight: 400;
+padding: 5px 10px;
+text-align: center;
+margin: 10px 10px;
+position: absolute;
+left: 17%;
+}
+#title_bar #button:hover{
+box-shadow: inset 0px 0px 5px #000;
+background: #4c4c4d;
+color: #fff;
+}
     </style>
     <body>
         <div id="contianer">
@@ -341,7 +359,6 @@
               
             <div id="home_screen">
                 <div id="title_screen">
-                    
                     <div id="title">
                         <img style="float: left;" height="140px" src="images/team537_gear.png" />
                         <div style="border-left: 3px solid #000; color: #fff; padding-left: 20px; margin-left: 20px; float: left; margin-top: 20px;">
@@ -374,6 +391,7 @@
                 </div>
 
                 <div id="title_bar">
+                    <div ng-click="finish_match()" class="donezo_button" style="display: none;" id="button">Done</div>
                     <div class="{{ scouting_data.scouting_team.alliance }}" id="scouting_team">{{ scouting_data.scouting_team.number }}</div>
                     <div id="scouter_name">{{ first_name }} {{ last_name }}</div>
                     <div id="scouter_time">{{ time.minutes }}:{{ time.seconds }}</div>
@@ -383,22 +401,22 @@
                 </div>
                 <table id="field-diagram-table">
                     <tr>
-                        <td class="blue-outline"><a ng-click="lightbox()" href="#" id="field-blue-brattice"><div> &nbsp;  &nbsp; </div></a></td>
-                        <td class="blue-outline" colspan="2"><a ng-click="lightbox()" href="#" id="field-blue-passage"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="blue-outline"><a ng-click="lightbox({'tower': false,'feild_pos':'BB'})" href="#" id="field-blue-brattice"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="blue-outline" colspan="2"><a ng-click="lightbox({'tower': false,'feild_pos':'BP'})" href="#" id="field-blue-passage"><div> &nbsp;  &nbsp; </div></a></td>
                         <td class="white-outline" colspan="2" rowspan="3"><a ng-click="lightbox({'tower': false,'feild_pos':'FN'})" href="#" id="field-far-neutral"><div> &nbsp;&nbsp; </div></a></td>
                         <td class="red-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'R1'})" href="#" id="field-red-d1"><div> {{ defenses.RedD1 }} </div></a></td>
-                        <td class="white-outline" rowspan="2" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtl'})" href="#" id="field-red-tower-left"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="white-outline" rowspan="2" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'RTL'})" href="#" id="field-red-tower-left"><div> &nbsp;  &nbsp; </div></a></td>
                     </tr>
                     <tr>
-                        <td class="white-outline" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'btr'})" href="#" id="field-blue-tower-right"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="white-outline" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'BTR'})" href="#" id="field-blue-tower-right"><div> &nbsp;  &nbsp; </div></a></td>
                         <td class="blue-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B5'})" href="#" id="field-blue-d5"><div> {{ defenses.BlueD5 }} </div></a></td>
                         <td class="red-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'R2'})" href="#" id="field-red-d2"><div> {{ defenses.RedD2 }} </div></a></td>
                     </tr>
                     <tr>
-                        <td class="white-outline" colspan="2" rowspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'btc'})" href="#" id="field-blue-tower-center"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'BTC'})" href="#" id="field-blue-tower-center"><div> &nbsp;  &nbsp; </div></a></td>
                         <td class="blue-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B4'})" href="#" id="field-blue-d4"><div> {{ defenses.BlueD4 }} </div></a></td>
                         <td class="red-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'R3'})" href="#" id="field-red-d3"><div> {{ defenses.RedD3 }} </div></a></td>
-                        <td class="white-outline" colspan="2" rowspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtc'})" href="#" id="field-red-tower-center"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'RTC'})" href="#" id="field-red-tower-center"><div> &nbsp;  &nbsp; </div></a></td>
                     </tr>
                     <tr>
                         <td class="blue-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B3'})" href="#" id="field-blue-d3"><div> {{ defenses.BlueD3 }} </div></a></td>
@@ -406,15 +424,15 @@
                         <td class="red-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'R4'})" href="#" id="field-red-d4"><div> {{ defenses.RedD4 }} </div></a></td>
                     </tr>
                     <tr>
-                        <td class="white-outline" colspan="2" rowspan="2"><a  ng-click="lightbox({'tower': true,'feild_pos':'btl'})"href="#" id="field-blue-tower-left"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="white-outline" colspan="2" rowspan="2"><a  ng-click="lightbox({'tower': true,'feild_pos':'BTL'})"href="#" id="field-blue-tower-left"><div> &nbsp;  &nbsp; </div></a></td>
                         <td class="blue-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B2'})" href="#" id="field-blue-d2"><div> {{ defenses.BlueD2 }} </div></a></td>
                         <td class="red-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'R5'})" href="#" id="field-red-d5"><div> {{ defenses.RedD5 }} </div></a></td>
-                        <td class="white-outline" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'rtr'})" href="#" id="field-red-tower-right"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="white-outline" colspan="2"><a ng-click="lightbox({'tower': true,'feild_pos':'RTR'})" href="#" id="field-red-tower-right"><div> &nbsp;  &nbsp; </div></a></td>
                     </tr>
                     <tr>
                         <td class="blue-defense"><a ng-click="lightbox({'tower': false,'feild_pos':'B1'})" href="#" id="field-blue-d1"><div> {{ defenses.BlueD1 }} </div></a></td>
-                        <td class="red-outline" colspan="2"><a ng-click="lightbox()" href="#" id="field-red-passage"><div> &nbsp;  &nbsp; </div></a></td>
-                        <td class="red-outline"><a ng-click="lightbox()" href="#" id="field-red-brattice"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="red-outline" colspan="2"><a ng-click="lightbox({'tower': false,'feild_pos':'RP'})" href="#" id="field-red-passage"><div> &nbsp;  &nbsp; </div></a></td>
+                        <td class="red-outline"><a ng-click="lightbox({'tower': false,'feild_pos':'RB'})" href="#" id="field-red-brattice"><div> &nbsp;  &nbsp; </div></a></td>
                     </tr>
                 </table>
             </div>
@@ -453,6 +471,8 @@
             $scope.time = {};
             $scope.time.minutes = 00;
             $scope.time.seconds = 00;
+
+            $scope.donezo = '';
 
             $scope.stopTime = 'false';
 
@@ -508,6 +528,14 @@
                 
             };
             
+            $scope.finish_match = function () {
+                $scope.stopTime = 'true';
+                console.log('stop match');
+                $('#scouting_overlay').css({ 'display': 'block' });
+                $('#home_screen').animate({ 'top': '-0px' });
+                $('#scouting-container').css({ 'z-index': '-1' });
+            }
+
             socket.on('prepare_match',function(data){
                 $('#home_screen').animate({ 'top': '-675px' });
                 setTimeout(function () {
@@ -535,6 +563,7 @@
 
             socket.on('start_match', function (data) {
                 if (data == 'true') {
+                    $scope.stopTime = 'false';
                     console.log('start match');
                     $('#scouting_overlay').css({ 'display': 'none' });
                     $scope.t = 0;
@@ -569,6 +598,7 @@
                     }
                 } else {
                     console.log('match');
+                    $('.donezo_button').css({'display':'block'});
                 }
 
                 if ($scope.t >= 120) { m = 2; s = $scope.t - 120; } else { m = 0; s = $scope.t; }
@@ -585,7 +615,7 @@
                 $('#time-bar').animate({ 'width': $scope.t * bar_width + 'px' }, 1001);
                 if ($scope.t >= 120) { $('#time-bar').attr({ 'class': 'yellow' }); }
                 if ($scope.t >= 150) { $('#time-bar').attr({ 'class': 'red' }); }
-
+                $scope.formmatedTime = m + ':' + s;
                 $scope.t++;
             }
 
@@ -640,14 +670,16 @@
                 $('#lightbox, #overlay').css({ 'display': 'none' });
                 scouting_team = $scope.scouting_data.scouting_team;
                 match_data = $scope.scouting_data.response;
-                defenses = $scope.defense;
+                defense = $scope.defense;
                 tower = $scope.tower;
-                robot_actions = $scope.robot_actions;
+                robot_actions = $scope.robotAction;
                 success = $scope.success;
                 fail = $scope.fail;
-                time = $scope.t;
-                data = JSON.stringify({'match_info':match_data,'scouting_team':scouting_team, 'location':$scope.feild_pos,'tower':tower,'robot_actions':robot_actions,'success':success,'fail':fail,'time':time});
-                console.log(data);
+                time = $scope.formmatedTime;
+                event = { 'match_info': match_data, 'scouting_team': scouting_team, 'location': $scope.feild_pos, 'tower': tower, 'defense_action':defense, 'robot_actions': robot_actions, 'success': success, 'fail': fail, 'time': time };
+                data = JSON.stringify(event);
+                //console.log(data);
+                socket.emit('submit_event', data);
             }
 
         });

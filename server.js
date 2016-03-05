@@ -11,11 +11,11 @@ var connected_users = [];
 var mysql      = require('mysql');
 
 
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password: 'Robos5372317!',
-  database : 'scouting2016'
+var pool  = mysql.createPool({
+	host: "localhost",
+	user: "root",
+	password: "Robos5372317!",
+	database: "scouting2016"
 });
 
 function Shuffle(o) {
@@ -26,33 +26,41 @@ function Shuffle(o) {
 io.on('connect',function(socket){
    console.log('connected'); 
     
-    socket.on('GetCurrent_match',function(data){
-        connection.query('SELECT * FROM matches', function(err, rows, fields) {
-          if (err) throw err;
-          io.to('admin').emit('response',{'response':'CurrentMatch','data':rows[0]});
-          console.log('The solution is: ', rows[0]);
-        });
+   socket.on('GetCurrent_match', function (data) {
+       pool.getConnection(function (err, connection) {
+           connection.query('SELECT * FROM matches', function (err, rows, fields) {
+               if (err) throw err;
+               io.to('admin').emit('response', { 'response': 'CurrentMatch', 'data': rows[0] });
+               console.log('The solution is: ', rows[0]);
+           });
+           connection.release();
+       });
     });
     
     socket.on('next_match', function (data) {
-        connection.query('SELECT * FROM matches WHERE match_number="' + data + '"', function (err, rows, fields) {
-            
-          if (err) throw err;
-          if(rows[0] !== undefined){
-            io.to('admin').emit('response',{'response':'NextMatch','data':rows[0]});
-          }else{
-              io.to('admin').emit('response',{'response':'NextMatch','data':'null'});
-          }
-          console.log('The solution is: ', rows[0]);
-        });        
+        pool.getConnection(function (err, connection) {
+            connection.query('SELECT * FROM matches WHERE match_number="' + data + '"', function (err, rows, fields) {
+                connection.end();
+                if (err) throw err;
+                if (rows[0] !== undefined) {
+                    io.to('admin').emit('response', { 'response': 'NextMatch', 'data': rows[0] });
+                } else {
+                    io.to('admin').emit('response', { 'response': 'NextMatch', 'data': 'null' });
+                }
+                console.log('The solution is: ', rows[0]);
+            });
+            connection.release();
+        });
     });
     socket.on('prev_match', function (data) {
-        connection.query('SELECT * FROM matches WHERE match_number="' + data + '"', function (err, rows, fields) {
-            
-          if (err) throw err;
-          io.to('admin').emit('response',{'response':'NextMatch','data':rows[0]});
-          console.log('The solution is: ', rows[0]);
-        });         
+        pool.getConnection(function (err, connection) {
+            connection.query('SELECT * FROM matches WHERE match_number="' + data + '"', function (err, rows, fields) {
+                if (err) throw err;
+                io.to('admin').emit('response', { 'response': 'NextMatch', 'data': rows[0] });
+                console.log('The solution is: ', rows[0]);
+                connection.release();
+            });
+        });
     });
     
     
@@ -80,7 +88,165 @@ io.on('connect',function(socket){
             io.to('admin').emit('connected_user',connected_users);
         }
     });
-  
+    //define location of robot
+    function locationConverter(locationName, alliance) {
+        if (alliance == 'red') {
+            //seceret passage and brattice
+            if (locationName == 'BB') { locationId = 14; }
+            if (locationName == 'BP') { locationId = 2; }
+            if (locationName == 'RB') { locationId = 14; }
+            if (locationName == 'RP') { locationId = 1; }
+            //tower left center right
+            if (locationName == 'BTL' || locationName == 'RTL') { locationId = 19; }
+            if (locationName == 'BTC' || locationName == 'RTC') { locationId = 18; }
+            if (locationName == 'BTR' || locationName == 'RTR') { locationId = 17; }
+            //Neutral Zones////// NN is left //// FN is right
+            if (locationName == 'NN') { locationId = 15; }
+            if (locationName == 'FN') { locationId = 16; }
+            //Own Defenses
+            if (locationName == 'R1') { locationId = 4; }
+            if (locationName == 'R2') { locationId = 5; }
+            if (locationName == 'R3') { locationId = 6; }
+            if (locationName == 'R4') { locationId = 7; }
+            if (locationName == 'R5') { locationId = 8; }
+            //opponent defenses
+            if (locationName == 'B1') { locationId = 9; }
+            if (locationName == 'B2') { locationId = 10; }
+            if (locationName == 'B3') { locationId = 11; }
+            if (locationName == 'B4') { locationId = 12; }
+            if (locationName == 'B5') { locationId = 13; }
+
+        } else {
+            //seceret passage and brattice
+            if (locationName == 'RB') { locationId = 14; }
+            if (locationName == 'RP') { locationId = 2; }
+            if (locationName == 'BB') { locationId = 14; }
+            if (locationName == 'BP') { locationId = 1; }
+            //tower left center right
+            if (locationName == 'BTL' || locationName == 'RTL') { locationId = 19; }
+            if (locationName == 'BTC' || locationName == 'RTC') { locationId = 18; }
+            if (locationName == 'BTR' || locationName == 'RTR') { locationId = 17; }
+            //Neutral Zones////// NN is left //// FN is right
+            if (locationName == 'NN') { locationId = 15; }
+            if (locationName == 'FN') { locationId = 16; }
+            //Oppenent Defenses
+            if (locationName == 'R1') { locationId = 9; }
+            if (locationName == 'R2') { locationId = 10; }
+            if (locationName == 'R3') { locationId = 11; }
+            if (locationName == 'R4') { locationId = 12; }
+            if (locationName == 'R5') { locationId = 13; }
+            //Own defenses
+            if (locationName == 'B1') { locationId = 4; }
+            if (locationName == 'B2') { locationId = 5; }
+            if (locationName == 'B3') { locationId = 6; }
+            if (locationName == 'B4') { locationId = 7; }
+            if (locationName == 'B5') { locationId = 8; }
+        }
+        return locationId;
+    }
+    function defenseCross(pos, alliance, defenses) {
+        if (pos >= 4 && pos <= 8) {
+            console.log('own defense');
+            //narrow down to what defense
+            pos = pos - 3;
+            var type = 0;
+            _.each(defenses, function (d, loc) {
+                //console.log(d);
+                if (loc == alliance + pos) {
+                    //narrow down to action type
+                    console.log(d);
+                    if (d == 'Portcullis') { type = 6 }
+                    if (d == 'Cheval de Frise') { type = 7 }
+                    if (d == 'Moat') { type = 8 }
+                    if (d == 'Ramparts') { type = 9 }
+                    if (d == 'Drawbridge') { type = 10 }
+                    if (d == 'Sally Port') { type = 11 }
+                    if (d == 'Rock Wall') { type = 12 }
+                    if (d == 'Rough Terrain') { type = 13 }
+                    if (d == 'Low Bar') { type = 14 }
+                    
+                }
+            });
+            return type;
+        } else {
+            console.log('opponent defense');
+            //narrow down to what defense
+            pos = pos - 8;
+            var type = 0;
+            _.each(defenses, function (d, loc) {
+                //console.log(d);
+                if (loc == alliance + pos) {
+                    //narrow down to action type
+                    console.log(d);
+                    if (d == 'Portcullis') { type = 6 }
+                    if (d == 'Cheval de Frise') { type = 7 }
+                    if (d == 'Moat') { type = 8 }
+                    if (d == 'Ramparts') { type = 9 }
+                    if (d == 'Drawbridge') { type = 10 }
+                    if (d == 'Sally Port') { type = 11 }
+                    if (d == 'Rock Wall') { type = 12 }
+                    if (d == 'Rough Terrain') { type = 13 }
+                    if (d == 'Low Bar') { type = 14 }
+
+                }
+            });
+            return type;
+        }
+        
+        
+    }
+    socket.on('submit_event', function (data) {
+        data = JSON.parse(data);
+        console.log(data);
+        //define some basic vars
+        match_id = data.match_info.current_match.match_id;
+        match_num = data.match_info.current_match.match_num;
+        scouting_team = data.scouting_team.number;
+        scouting_alliance = data.scouting_team.alliance;
+        //
+
+        //put some logic on this thing
+        robotPos = locationConverter(data.location, scouting_alliance);
+        //if defenses
+        if (data.defense_action.crossed == true) {
+            //robot is crossing a defense
+            //figure out which defense
+            action = defenseCross(robotPos, scouting_alliance, data.match_info.defenses);
+            console.log(action);
+        }else if(data.defense_action.reached){
+            //challange
+            action = 4;
+        } else if (data.tower.climb) {
+            action = 16;
+        } else if (data.tower.challenge) {
+            action = 15;
+        } else if (data.tower.high_goal) {
+            action = 2;
+        } else if (data.tower.low_goal) {
+            action = 3;
+        } else if (data.robot_actions.defended) {
+            action = 18;
+        } else if (data.robot_actions.collect) {
+            action = 5;
+        } else if (data.robot_actions.passed) {
+            action = 17;
+        }
+        if(data.success){
+            success = 1;
+        }else{
+            success = 0;
+        }
+        console.log(robotPos);
+        match_time = data.time;
+
+        pool.getConnection(function (err, connection) {
+            connection.query('INSERT INTO match_actions SET match_id="' + match_id + '",action_id="' + action + '",team_number="' + scouting_team + '",match_time="' + match_time + '",location_id="' + robotPos + '",successful="'+success+'"', function (err, rows, fields) {
+                console.log(err);
+            });
+            connection.release();
+        });
+
+    });
     //defense type function
 
     function defense_type(type) {
