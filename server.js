@@ -125,15 +125,33 @@ io.on('connect',function(socket){
             i++;
         });
 
+        //this has issues with double repeating
+        active = false;
         socket.on('start_match', function (data) {
             if (data == 'true') {
-                connected_users.forEach(function (user) {
-                    fn = user.fN;
-                    ln = user.lN;
-                    io.to(fn + '_' + ln).emit('start_match','true');
-                });
+                //some how this logic works... I don't know why
+                //but hey, it works!
+                if (active == false) {
+                    active = true;
+                    console.log(connected_users.length);
+                    connected_users.forEach(function (user) {
+                        fn = user.fN;
+                        ln = user.lN;
+                        //console.log(fn+' starting');
+                        io.to(fn + '_' + ln).emit('start_match', 'true');
+                    });
+                }
             }
         });
+
+        socket.on('stop_match', function (data) {
+            connected_users.forEach(function (users) {
+                fn = users.fN;
+                ln = users.lN;
+                io.to(fn+'_'+ln).emit('stop_match','true');
+            });
+        });
+
         //console.log(defenses);
         data.defenses = defenses;
         console.log(connected_users);

@@ -226,7 +226,7 @@
                         </div>
                         <h3 id="scouter_time" style="text-align: center; padding: 0; margin: 0; padding-bottom: 10px; font-size: 36px;">00:00:00</h3>
                         <div ng-if="!prepared_match" ng-click="prev_match()" style="float:left;" id="button"><</div>
-                        <div ng-click="prepare_match(); prepared_match=true;" class="start_button" style="position: relative; left: 50%; margin-left: -29%;" id="button">Prepare this Match</div>
+                        <div ng-click="prepare_match();" class="start_button" style="position: relative; left: 50%; margin-left: -29%;" id="button">Prepare this Match</div>
                         <div ng-if="!prepared_match" ng-click="next_match()" style="float:right;" id="button">></div>
                         <div class="clear"></div>
                     </div>
@@ -409,15 +409,16 @@
         app.controller('homepage', function ($scope, socket) {
             $scope.current_match = {};
             $scope.server_status = 'off';
+            $scope.prepared_match = false;
 
-
-
+            $scope.stopTime = 'false';
 
 
 
 
             i = 1;
             $scope.prepare_match = function () {
+                console.log('this is button'+i);
                 if (i == 1) {
                     $scope.current_match.blueD2 = $scope.bDefence2;
                     $scope.current_match.blueD3 = $scope.bDefence3;
@@ -439,8 +440,19 @@
                     i++;
                 } else if (i == 2){
                     console.log('Start match');
+                    $('.start_button').text('End Match');
                     socket.emit('start_match', 'true');
                     $scope.start_match();
+                    i++;
+                } else if (i == 3) {
+                    console.log('End match');
+                    $('.start_button').text('Prepare Match');
+                    $('.start_button').css({ 'left': '50%', 'margin-left': '-93.5px' });
+                    $scope.prepared_match = false;
+                    socket.emit('stop_match', 'true')
+                    $scope.stopTime = 'true';
+                    $('#scouter_time').html('0:00');
+                    i = 1;
                 }
             }
 
@@ -539,9 +551,15 @@
 
                 t++;
                 if (t < 150) {
-                    setTimeout(function () {
-                        $scope.start_match();
-                    }, 1000);
+                    if ($scope.stopTime == 'false') {
+                        setTimeout(function () {
+                            $scope.start_match();
+                        }, 1000);
+                    } else {
+                        $scope.stopTime = 'false';
+                        console.log('stopped');
+                        setTimeout(function () { $('#scouter_time').html('0:00'); t = 0; }, 1000);
+                    }
                 } else {
                     console.log('match');
                 }

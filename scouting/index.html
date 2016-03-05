@@ -454,6 +454,8 @@
             $scope.time.minutes = 00;
             $scope.time.seconds = 00;
 
+            $scope.stopTime = 'false';
+
             //data from server
             $scope.defenses = {};
 
@@ -465,6 +467,8 @@
             $scope.current_match = 00;
             $scope.server_status = 'off';
             
+            $scope.stopTime = 'false';
+
             socket.on('connect',function(){
                $scope.server_status = 'on'; 
             });
@@ -526,44 +530,63 @@
                 console.log(data.response.defenses);
                 //setTime to default
                 $('#scouter_time').html('0:00');
-                $('#time-bar').css({ 'width': t * bar_width + 'px' });
+                $('#time-bar').css({ 'width': $scope.t * bar_width + 'px' });
             });
 
             socket.on('start_match', function (data) {
                 if (data == 'true') {
+                    console.log('start match');
                     $('#scouting_overlay').css({ 'display': 'none' });
-                    var t = 0;
+                    $scope.t = 0;
                     $scope.start_match();
                 }
             });
 
+            socket.on('stop_match', function (data) {
+                $scope.stopTime = 'true';
+                console.log('stop match');
+                $('#scouting_overlay').css({ 'display': 'block' });
+                $('#home_screen').animate({ 'top': '-0px' });
+                $('#scouting-container').css({ 'z-index': '-1' });
+            });
+
             bar_width = 1024 / 150;
-            var t = 0;
+            $scope.t = 0;
             $scope.start_match = function () {
   
-                t++;
-                if (t < 150) {
-                    setTimeout(function () {
-                        $scope.start_match();
-                    }, 1000);
+
+                if ($scope.t < 150) {
+                    if ($scope.stopTime == 'false') {
+                        setTimeout(function () {
+                            $scope.start_match();
+                        }, 1000);
+                    } else {
+                        
+                        console.log('stopped');
+                        setTimeout(function () { $('#scouter_time').html('0:00'); $scope.stopTime = 'false'; }, 1000);
+                        $scope.t = 0;
+                        console.log($scope.t);
+                    }
                 } else {
                     console.log('match');
                 }
 
-                if (t >= 120) { m = 2; s = t-120; } else { m = 0; s = t; }
-                if (t >= 60 && t < 120) { m = 1; s = t - 60; }
+                if ($scope.t >= 120) { m = 2; s = $scope.t - 120; } else { m = 0; s = $scope.t; }
+                if ($scope.t >= 60 && $scope.t < 120) { m = 1; s = $scope.t - 60; }
 
-                if (t <= 9 && s <= 9) { s = '0' + t; }
-                if (t > 60 && (t - 60) <= 9) { s = '0' + (t - 60); }
-                if (t >= 120 && (t - 120) <= 9) { s = '0' + (t - 120); }
+                if ($scope.t <= 9 && s <= 9) { s = '0' + $scope.t; }
+                if ($scope.t > 60 && ($scope.t - 60) <= 9) { s = '0' + ($scope.t - 60); }
+                if ($scope.t >= 120 && ($scope.t - 120) <= 9) { s = '0' + ($scope.t - 120); }
                 if (s == 0) { s = '00'; }
                 console.log(m + ':' + s);
                 $('#scouter_time').html(m + ':' + s);
                 
-                console.log(t*bar_width);
-                $('#time-bar').animate({ 'width': t * bar_width + 'px' }, 1001);
-                if (t >= 120) { $('#time-bar').attr({ 'class': 'yellow' }); }
-                if (t >= 150) { $('#time-bar').attr({ 'class': 'red' }); }
+                console.log($scope.t * bar_width);
+                $('#time-bar').animate({ 'width': $scope.t * bar_width + 'px' }, 1001);
+                if ($scope.t >= 120) { $('#time-bar').attr({ 'class': 'yellow' }); }
+                if ($scope.t >= 150) { $('#time-bar').attr({ 'class': 'red' }); }
+
+                $scope.t++;
             }
 
 
