@@ -617,7 +617,7 @@ color: #fff;
                 $('#time-bar').animate({ 'width': $scope.t * bar_width + 'px' }, 1001);
                 if ($scope.t >= 120) { $('#time-bar').attr({ 'class': 'yellow' }); }
                 if ($scope.t >= 150) { $('#time-bar').attr({ 'class': 'red' }); }
-                $scope.formmatedTime = m + ':' + s;
+                $scope.formmatedTime = $scope.t;
                 $scope.t++;
             }
 

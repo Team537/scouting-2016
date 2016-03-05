@@ -240,7 +240,7 @@ io.on('connect',function(socket){
         match_time = data.time;
 
         pool.getConnection(function (err, connection) {
-            connection.query('INSERT INTO match_actions SET match_id="' + match_id + '",action_id="' + action + '",team_number="' + scouting_team + '",match_time="' + match_time + '",location_id="' + robotPos + '",successful="'+success+'"', function (err, rows, fields) {
+            connection.query('INSERT INTO match_actions (match_id,action_id,team_number,match_time,location_id,successful) VALUES("' + match_id + '","' + action + '","' + scouting_team + '","' + match_time + '","' + robotPos + '","' + success + '")', function (err, rows, fields) {
                 console.log(err);
             });
             connection.release();
