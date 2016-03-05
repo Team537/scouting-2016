@@ -35,9 +35,8 @@ io.on('connect',function(socket){
     });
     
     socket.on('next_match', function (data) {
-        connection.connect();
-        connection.query('SELECT * FROM matches WHERE matchno="' + data + '"', function (err, rows, fields) {
-            connection.release();
+        connection.query('SELECT * FROM matches WHERE match_number="' + data + '"', function (err, rows, fields) {
+            
           if (err) throw err;
           if(rows[0] !== undefined){
             io.to('admin').emit('response',{'response':'NextMatch','data':rows[0]});
@@ -48,9 +47,8 @@ io.on('connect',function(socket){
         });        
     });
     socket.on('prev_match', function (data) {
-        connection.connect();
-        connection.query('SELECT * FROM matches WHERE matchno="' + data + '"', function (err, rows, fields) {
-            connection.release();
+        connection.query('SELECT * FROM matches WHERE match_number="' + data + '"', function (err, rows, fields) {
+            
           if (err) throw err;
           io.to('admin').emit('response',{'response':'NextMatch','data':rows[0]});
           console.log('The solution is: ', rows[0]);

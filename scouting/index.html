@@ -330,7 +330,7 @@
                         <div ng-click="success = (success==false ? true : false); fail=false" ng-class="{'active': success, 'not_active': !success}" id="button">Success</div>
                         <div ng-click="fail = (fail==false ? true : false); success=false" ng-class="{'active': fail, 'not_active': !fail}" id="button">Fail</div>
                         <hr style="width: 100%;"/>
-                        <div id="button">Submit</div>
+                        <div ng-click="submit_event()" id="button">Submit</div>
                         <div ng-click="close_lightbox()" id="button">Cancle</div>
 
                     </div>
@@ -578,10 +578,10 @@
                 if ($scope.t > 60 && ($scope.t - 60) <= 9) { s = '0' + ($scope.t - 60); }
                 if ($scope.t >= 120 && ($scope.t - 120) <= 9) { s = '0' + ($scope.t - 120); }
                 if (s == 0) { s = '00'; }
-                console.log(m + ':' + s);
+                console.log(2-m + ':' + (60-s));
                 $('#scouter_time').html(m + ':' + s);
                 
-                console.log($scope.t * bar_width);
+                //console.log($scope.t * bar_width);
                 $('#time-bar').animate({ 'width': $scope.t * bar_width + 'px' }, 1001);
                 if ($scope.t >= 120) { $('#time-bar').attr({ 'class': 'yellow' }); }
                 if ($scope.t >= 150) { $('#time-bar').attr({ 'class': 'red' }); }
@@ -591,7 +591,7 @@
 
 
             $scope.lightbox = function (data) {
-
+                $scope.feild_pos = data.feild_pos;
                 $scope.tower.climb = false;
                 $scope.tower.challenge = false;
                 $scope.tower.left = false;
@@ -600,8 +600,8 @@
 
                 $scope.tower.high_goal = false;
                 $scope.tower.low_goal = false;
-                $scope.tower.success = false;
-                $scope.tower.fail = false;
+                $scope.success = false;
+                $scope.fail = false;
 
                 $scope.defense.crossed = false;
                 $scope.defense.reached = false;
@@ -629,6 +629,27 @@
             socket.on('scouter_disconnect',function(data){
                  console.log(data);
             });
+
+
+
+
+
+
+
+            $scope.submit_event = function () {
+                $('#lightbox, #overlay').css({ 'display': 'none' });
+                scouting_team = $scope.scouting_data.scouting_team;
+                match_data = $scope.scouting_data.response;
+                defenses = $scope.defense;
+                tower = $scope.tower;
+                robot_actions = $scope.robot_actions;
+                success = $scope.success;
+                fail = $scope.fail;
+                time = $scope.t;
+                data = JSON.stringify({'match_info':match_data,'scouting_team':scouting_team, 'location':$scope.feild_pos,'tower':tower,'robot_actions':robot_actions,'success':success,'fail':fail,'time':time});
+                console.log(data);
+            }
+
         });
         
         
