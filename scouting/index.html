@@ -368,7 +368,7 @@
                         <div id="title">
                             <h1 style="color: #fff; font-size: 35px; text-align: center; position: relative; top: 10px;">Get ready to scout!</h1>
                         </div>
-                            <h2 style="text-align: center; padding: 10px;">You are scouting,</h2>
+                            <h2 style="text-align: center; padding: 10px;">You are scouting team,</h2>
                             <h1 style="font-size: 100px; color: {{ scouting_data.scouting_team.alliance }}; text-align: center;">{{ scouting_data.scouting_team.number }}</h1>
                      </div>
                 </div>
@@ -529,10 +529,18 @@
                 $('#time-bar').css({ 'width': t * bar_width + 'px' });
             });
 
+            socket.on('start_match', function (data) {
+                if (data == 'true') {
+                    $('#scouting_overlay').css({ 'display': 'none' });
+                    var t = 0;
+                    $scope.start_match();
+                }
+            });
+
             bar_width = 1024 / 150;
-            t = 0;
+            var t = 0;
             $scope.start_match = function () {
- 
+  
                 t++;
                 if (t < 150) {
                     setTimeout(function () {

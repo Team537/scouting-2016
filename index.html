@@ -224,10 +224,10 @@
                         <div>
                             <h1 id="current_matchnum" style="text-align: center; font-size: 100px; margin: 0px; padding: 0;">{{ current_match.match_number }}</h1>
                         </div>
-                        <h3 style="text-align: center; padding: 0; margin: 0; padding-bottom: 10px; font-size: 36px;">00:00:00</h3>
-                        <div ng-click="prev_match()" style="float:left;" id="button"><</div>
-                        <div ng-click="prepare_match()" ng-click="prepare()" style="position: relative; left: 50%; margin-left: -29%;" id="button">Prepare this Match</div>
-                        <div ng-click="next_match()" style="float:right;" id="button">></div>
+                        <h3 id="scouter_time" style="text-align: center; padding: 0; margin: 0; padding-bottom: 10px; font-size: 36px;">00:00:00</h3>
+                        <div ng-if="!prepared_match" ng-click="prev_match()" style="float:left;" id="button"><</div>
+                        <div ng-click="prepare_match(); prepared_match=true;" class="start_button" style="position: relative; left: 50%; margin-left: -29%;" id="button">Prepare this Match</div>
+                        <div ng-if="!prepared_match" ng-click="next_match()" style="float:right;" id="button">></div>
                         <div class="clear"></div>
                     </div>
                 </div>
@@ -416,23 +416,32 @@
 
 
 
+            i = 1;
+            $scope.prepare_match = function () {
+                if (i == 1) {
+                    $scope.current_match.blueD2 = $scope.bDefence2;
+                    $scope.current_match.blueD3 = $scope.bDefence3;
+                    $scope.current_match.blueD4 = $scope.bDefence4;
+                    $scope.current_match.blueD5 = $scope.bDefence5;
 
-            $scope.prepare_match = function(){
-                $scope.current_match.blueD2 = $scope.bDefence2;
-                $scope.current_match.blueD3 = $scope.bDefence3;
-                $scope.current_match.blueD4 = $scope.bDefence4;
-                $scope.current_match.blueD5 = $scope.bDefence5;
+                    $scope.current_match.redD2 = $scope.rDefence2;
+                    $scope.current_match.redD3 = $scope.rDefence3;
+                    $scope.current_match.redD4 = $scope.rDefence4;
+                    $scope.current_match.redD5 = $scope.rDefence5;
 
-                $scope.current_match.redD2 = $scope.rDefence2;
-                $scope.current_match.redD3 = $scope.rDefence3;
-                $scope.current_match.redD4 = $scope.rDefence4;
-                $scope.current_match.redD5 = $scope.rDefence5;
+                    $('.start_button').text('Start Match');
+                    $('.start_button').css({ 'left': '50%', 'margin-left': '-61px' });
+                    defenses = { 'RedD1': 'lowbar', 'RedD2': $scope.current_match.redD2, 'RedD3': $scope.current_match.redD3, 'RedD4': $scope.current_match.redD4, 'RedD5': $scope.current_match.redD5, 'BlueD1': 'lowbar', 'BlueD2': $scope.current_match.blueD2, 'BlueD3': $scope.current_match.blueD3, 'BlueD4': $scope.current_match.blueD4, 'BlueD5': $scope.current_match.blueD5 };
 
-                defenses = { 'RedD1': 'lowbar', 'RedD2': $scope.current_match.redD2, 'RedD3': $scope.current_match.redD3, 'RedD4': $scope.current_match.redD4, 'RedD5': $scope.current_match.redD5, 'BlueD1': 'lowbar', 'BlueD2': $scope.current_match.blueD2, 'BlueD3': $scope.current_match.blueD3, 'BlueD4': $scope.current_match.blueD4, 'BlueD5': $scope.current_match.blueD5 };
-
-                data = {'current_match':$scope.current_match, 'defenses':defenses}
-                console.log(JSON.stringify(data));
-                socket.emit('prepare_match',data);
+                    data = { 'current_match': $scope.current_match, 'defenses': defenses }
+                    console.log(JSON.stringify(data));
+                    socket.emit('prepare_match', data);
+                    i++;
+                } else if (i == 2){
+                    console.log('Start match');
+                    socket.emit('start_match', 'true');
+                    $scope.start_match();
+                }
             }
 
             //next match
@@ -524,6 +533,33 @@
                 console.log(id);
                 $scope.connected_users.splice(id,1);
                 socket.emit('logout',id);
+            }
+            t = 0;
+            $scope.start_match = function () {
+
+                t++;
+                if (t < 150) {
+                    setTimeout(function () {
+                        $scope.start_match();
+                    }, 1000);
+                } else {
+                    console.log('match');
+                }
+
+                if (t >= 120) { m = 2; s = t - 120; } else { m = 0; s = t; }
+                if (t >= 60 && t < 120) { m = 1; s = t - 60; }
+
+                if (t <= 9 && s <= 9) { s = '0' + t; }
+                if (t > 60 && (t - 60) <= 9) { s = '0' + (t - 60); }
+                if (t >= 120 && (t - 120) <= 9) { s = '0' + (t - 120); }
+                if (s == 0) { s = '00'; }
+                console.log(m + ':' + s);
+                $('#scouter_time').html(m + ':' + s);
+
+               // console.log(t * bar_width);
+               // $('#time-bar').animate({ 'width': t * bar_width + 'px' }, 1001);
+                //if (t >= 120) { $('#time-bar').attr({ 'class': 'yellow' }); }
+                //if (t >= 150) { $('#time-bar').attr({ 'class': 'red' }); }
             }
 
         });

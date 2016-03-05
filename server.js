@@ -124,6 +124,16 @@ io.on('connect',function(socket){
             defenses[type + pos] = defenseType;
             i++;
         });
+
+        socket.on('start_match', function (data) {
+            if (data == 'true') {
+                connected_users.forEach(function (user) {
+                    fn = user.fN;
+                    ln = user.lN;
+                    io.to(fn + '_' + ln).emit('start_match','true');
+                });
+            }
+        });
         //console.log(defenses);
         data.defenses = defenses;
         console.log(connected_users);
