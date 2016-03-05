@@ -417,58 +417,62 @@
 
 
             i = 1;
-            $scope.prepare_match = function () {
-                console.log('this is button'+i);
-                if (i == 1) {
-                    $scope.current_match.blueD2 = $scope.bDefence2;
-                    $scope.current_match.blueD3 = $scope.bDefence3;
-                    $scope.current_match.blueD4 = $scope.bDefence4;
-                    $scope.current_match.blueD5 = $scope.bDefence5;
-
-                    $scope.current_match.redD2 = $scope.rDefence2;
-                    $scope.current_match.redD3 = $scope.rDefence3;
-                    $scope.current_match.redD4 = $scope.rDefence4;
-                    $scope.current_match.redD5 = $scope.rDefence5;
-
-                    $('.start_button').text('Start Match');
-                    $('.start_button').css({ 'left': '50%', 'margin-left': '-61px' });
-                    defenses = { 'RedD1': 'lowbar', 'RedD2': $scope.current_match.redD2, 'RedD3': $scope.current_match.redD3, 'RedD4': $scope.current_match.redD4, 'RedD5': $scope.current_match.redD5, 'BlueD1': 'lowbar', 'BlueD2': $scope.current_match.blueD2, 'BlueD3': $scope.current_match.blueD3, 'BlueD4': $scope.current_match.blueD4, 'BlueD5': $scope.current_match.blueD5 };
-
-                    data = { 'current_match': $scope.current_match, 'defenses': defenses }
-                    console.log(JSON.stringify(data));
-                    socket.emit('prepare_match', data);
-                    i++;
-                } else if (i == 2){
-                    console.log('Start match');
-                    $('.start_button').text('End Match');
-                    socket.emit('start_match', 'true');
-                    $scope.start_match();
-                    i++;
-                } else if (i == 3) {
-                    console.log('End match');
-                    $('.start_button').text('Prepare Match');
-                    $('.start_button').css({ 'left': '50%', 'margin-left': '-93.5px' });
-                    $scope.prepared_match = false;
-                    socket.emit('stop_match', 'true')
-                    $scope.stopTime = 'true';
-                    $('#scouter_time').html('0:00');
+            $scope.prepare_match = function (reset) {
+                if (reset == 1) {
                     i = 1;
+                } else {
+                    console.log('this is button' + i);
+                    if (i == 1) {
+                        $scope.current_match.blueD2 = $scope.bDefence2;
+                        $scope.current_match.blueD3 = $scope.bDefence3;
+                        $scope.current_match.blueD4 = $scope.bDefence4;
+                        $scope.current_match.blueD5 = $scope.bDefence5;
+
+                        $scope.current_match.redD2 = $scope.rDefence2;
+                        $scope.current_match.redD3 = $scope.rDefence3;
+                        $scope.current_match.redD4 = $scope.rDefence4;
+                        $scope.current_match.redD5 = $scope.rDefence5;
+
+                        $('.start_button').text('Start Match');
+                        $('.start_button').css({ 'left': '50%', 'margin-left': '-61px' });
+                        defenses = { 'RedD1': 'lowbar', 'RedD2': $scope.current_match.redD2, 'RedD3': $scope.current_match.redD3, 'RedD4': $scope.current_match.redD4, 'RedD5': $scope.current_match.redD5, 'BlueD1': 'lowbar', 'BlueD2': $scope.current_match.blueD2, 'BlueD3': $scope.current_match.blueD3, 'BlueD4': $scope.current_match.blueD4, 'BlueD5': $scope.current_match.blueD5 };
+
+                        data = { 'current_match': $scope.current_match, 'defenses': defenses }
+                        console.log(JSON.stringify(data));
+                        socket.emit('prepare_match', data);
+                        i++;
+                    } else if (i == 2) {
+                        console.log('Start match');
+                        $('.start_button').text('End Match');
+                        socket.emit('start_match', 'true');
+                        $scope.start_match();
+                        i++;
+                    } else if (i == 3) {
+                        console.log('End match');
+                        $('.start_button').text('Prepare Match');
+                        $('.start_button').css({ 'left': '50%', 'margin-left': '-93.5px' });
+                        $scope.prepared_match = false;
+                        socket.emit('stop_match', 'true')
+                        $scope.stopTime = 'true';
+                        $('#scouter_time').html('0:00');
+                        i = 1;
+                    }
                 }
             }
 
             //next match
             $scope.next_match = function(){
-                socket.emit('prev_match',$scope.current_match.matchno+1);
+                socket.emit('prev_match',$scope.current_match.match_id+1);
             }
             //prev match
             $scope.prev_match = function(){
-                if($scope.current_match.matchno - 1 == 0){
+                if($scope.current_match.match_id - 1 == 0){
                     $('#current_matchnum').css({'text-shadow':'0px 0px 5px red'});
                     setTimeout(function(){
                         $('#current_matchnum').css({'text-shadow':'none'});
                     },900);
                 }else{
-                    socket.emit('prev_match',$scope.current_match.matchno-1);
+                    socket.emit('prev_match',$scope.current_match.match_id-1);
                 }
             }
 
@@ -546,7 +550,7 @@
                 $scope.connected_users.splice(id,1);
                 socket.emit('logout',id);
             }
-            t = 0;
+            var t = 0;
             $scope.start_match = function () {
 
                 t++;
@@ -562,6 +566,8 @@
                     }
                 } else {
                     console.log('match');
+                    t = 0;
+                    $scope.prepare_match(1);
                 }
 
                 if (t >= 120) { m = 2; s = t - 120; } else { m = 0; s = t; }

@@ -267,7 +267,7 @@
                 z-index: 1;
             }
 #title_bar #button{
-background: #ebebeb;
+background: #666;
 color: #ccc;
 border-radius: 5px;
 box-shadow: 0px 3px 0px #bcbcbc;
@@ -534,6 +534,7 @@ color: #fff;
                 $('#scouting_overlay').css({ 'display': 'block' });
                 $('#home_screen').animate({ 'top': '-0px' });
                 $('#scouting-container').css({ 'z-index': '-1' });
+                $('#donezo_button').css({'display':'none'});
             }
 
             socket.on('prepare_match',function(data){
@@ -598,7 +599,8 @@ color: #fff;
                     }
                 } else {
                     console.log('match');
-                    $('.donezo_button').css({'display':'block'});
+                    $('.donezo_button').css({ 'display': 'block' });
+                    $scope.t = 0;
                 }
 
                 if ($scope.t >= 120) { m = 2; s = $scope.t - 120; } else { m = 0; s = $scope.t; }
