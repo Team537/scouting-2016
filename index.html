@@ -238,9 +238,9 @@
                     <div id="box_container">
                         <div class="row">
                             <div class="col-md-1" id="blue">
-                                {{ current_match.blue1 }}<br />
-                                {{ current_match.blue2 }}<br />
-                                {{ current_match.blue3 }}
+                                <div style="color: #fff; font-size: 20px; text-align: center; padding-top: 17px;">{{ current_match.blue1 }}</div>
+                                <div style="color: #fff; font-size: 20px; text-align: center;">{{ current_match.blue2 }}</div>
+                                <div style="color: #fff; font-size: 20px; text-align: center;">{{ current_match.blue3 }}</div>
                             </div>
                             <div class="col-md-2" id="defence"><img src="images/Defenses/Lowbar.png"></div>
                             <div class="col-md-2" id="defence">
@@ -299,9 +299,9 @@
                         </div>
                         <div class="row">
                             <div class="col-md-1" id="red">
-                                {{ current_match.red1 }}<br />
-                                {{ current_match.red2 }}<br />
-                                {{ current_match.red3 }}
+                                <div style="color: #fff; font-size: 20px; text-align: center; padding-top: 17px;">{{ current_match.red1 }}</div>
+                                <div style="color: #fff; font-size: 20px; text-align: center;">{{ current_match.red2 }}</div>
+                                <div style="color: #fff; font-size: 20px; text-align: center;">{{ current_match.red3 }}</div>
                             </div>
                             <div class="col-md-2" id="defence"><img src="images/Defenses/Lowbar.png"></div>
                             <div class="col-md-2" id="defence">
@@ -434,7 +434,7 @@
                         $scope.current_match.redD5 = $scope.rDefence5;
 
                         $('.start_button').text('Start Match');
-                        $('.start_button').css({ 'left': '50%', 'margin-left': '-61px' });
+                        $('.start_button').css({ 'left': '50%', 'margin-left': '-88px' });
                         defenses = { 'RedD1': 'lowbar', 'RedD2': $scope.current_match.redD2, 'RedD3': $scope.current_match.redD3, 'RedD4': $scope.current_match.redD4, 'RedD5': $scope.current_match.redD5, 'BlueD1': 'lowbar', 'BlueD2': $scope.current_match.blueD2, 'BlueD3': $scope.current_match.blueD3, 'BlueD4': $scope.current_match.blueD4, 'BlueD5': $scope.current_match.blueD5 };
 
                         data = { 'current_match': $scope.current_match, 'defenses': defenses }
@@ -562,13 +562,14 @@
                     } else {
                         $scope.stopTime = 'false';
                         console.log('stopped');
-                        setTimeout(function () { $('#scouter_time').html('0:00'); t = 0; }, 1000);
+                        setTimeout(function () { $('#scouter_time').html('0:00'); }, 1000);
+                        $scope.next_match();
                     }
                 } else {
                     console.log('match');
                     t = 0;
                     $scope.prepare_match(1);
-                    $('.start_button').text('Prepare Match');
+                    $('.start_button').text('Prepare this Match').css({ 'margin-left': '-29%' });
                 }
 
                 if (t >= 120) { m = 2; s = t - 120; } else { m = 0; s = t; }

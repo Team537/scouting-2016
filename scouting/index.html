@@ -536,9 +536,10 @@ color: #fff;
                 $('#scouting-container').css({ 'z-index': '-1' });
                 $('#donezo_button').css({'display':'none'});
             }
-
+        
             socket.on('prepare_match',function(data){
                 $('#home_screen').animate({ 'top': '-675px' });
+                $('.donezo_button').css({ 'display': 'none' });
                 setTimeout(function () {
                     $('#scouting-container').css({ 'z-index': '1' });
                 },900);
@@ -560,6 +561,8 @@ color: #fff;
                 //setTime to default
                 $('#scouter_time').html('0:00');
                 $('#time-bar').css({ 'width': $scope.t * bar_width + 'px' });
+                $('#time-bar').attr({ 'class': 'green' });
+                $scope.t = 0;
             });
 
             socket.on('start_match', function (data) {
@@ -594,7 +597,7 @@ color: #fff;
                         
                         console.log('stopped');
                         setTimeout(function () { $('#scouter_time').html('0:00'); $scope.stopTime = 'false'; }, 1000);
-                        $scope.t = 0;
+                       // $scope.t = 0;
                         console.log($scope.t);
                     }
                 } else {
@@ -642,7 +645,7 @@ color: #fff;
                 $scope.robotAction.collect = false;
                 $scope.robotAction.passed = false;
 
-                $('#lightbox, #overlay').css({ 'display': 'block' })
+                $('#lightbox, #overlay').css({ 'display': 'block' });
                 if (data.tower == true) {
                     $scope.lb_change = 'climb';
                     if (data.feild_pos == 'rtl' || data.feild_pos == 'btl') { $scope.tower.left = true; }
