@@ -188,6 +188,21 @@
                 cursor: pointer;
                 color: #fff;
             }
+			
+			
+			
+			table{
+				padding: 0;
+				margin: 0;
+				border-collapse: collapse;
+				width: 100%;
+				text-align: center;
+				font-size: 20px;	
+			}
+		h1,h2,h3,h4,h5,p{
+			padding: 0;
+			margin: 0;	
+		}
     </style>
     <!-- Bootstrap -->
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -208,7 +223,7 @@
         </div>
         <div class="container">
             <img id="logo" height="70px" src="images/team537_gear.png" />
-            <div id="title">2016 Scouting System</div>
+            <div id="title">2016 scouting System</div>
         </div>
     </div>
     <!-- start container-->
@@ -222,6 +237,11 @@
                     </div>
                     <div id="box_container">
                         <div>
+                        	<select ng-model="match_type" ng-change="changed_matchType()" style="font-size: 20px;">
+                            	<option value="p">Practice Matches</option>
+                                <option value="q">Qualifications</option>
+                                <option value="e">Playoffs</optgroup>
+                            </select>
                             <h1 id="current_matchnum" style="text-align: center; font-size: 100px; margin: 0px; padding: 0;">{{ current_match.match_number }}</h1>
                         </div>
                         <h3 id="scouter_time" style="text-align: center; padding: 0; margin: 0; padding-bottom: 10px; font-size: 36px;">00:00:00</h3>
@@ -362,11 +382,23 @@
             </div>
             <div class="row">
                 <div id="box" class="col-md-4">
-                    <div id="title">
-                        <div>Stats</div>
+                    <div ng-if="match_type == 'p'" id="title">
+                        <div>Add Practice Match</div>
                     </div>
-                    <div id="box_container">
-                        ASDF
+                    <div ng-if="match_type == 'p'" id="box_container" style="height: 134px;padding: 0px;padding-right: 20px;padding-left: 6px;padding-top: 14px;">
+                        <div style="width: 33%; float: left;">
+                        	<h4 style="color: red; text-align: center; margin-bottom: 10px; font-size: 20px;">Red Alliance</h4>
+                        	<input ng-model="red.team1" type="text" />
+                            <input ng-model="red.team2" type="text" />
+                            <input ng-model="red.team3" type="text" />
+                        </div>
+                        <div style="width: 33%; float: left;"> <div style="margin-left: 55px; margin-top: 20px;" id="button">Add</div> </div>
+                        <div style="width: 33%; float: left;">
+                        	<h4 style="color: blue; text-align: center; margin-bottom: 10px; font-size: 20px;">Blue Alliance</h4>
+                        	<input ng-model="blue.team1" type="text" />
+                            <input ng-model="blue.team2" type="text" />
+                            <input ng-model="blue.team3" type="text" />
+                        </div>
                     </div>
                 </div>
                 <!--UPCOMING MATCHES-->
@@ -374,8 +406,18 @@
                     <div id="title">
                         <div>Upcoming Matches</div>
                     </div>
-                    <div id="box_container">
-                        ASDF
+                    <div style="padding: 0!important;" id="box_container">
+                     	<table>
+                        	<tr style="background: #EDEDED;">
+                            	<td>Match #</td>
+                                <td>Red 1</td>
+                                <td>Red 2</td>
+                                <td>Red 3</td>
+                                <td>Blue 1</td>
+                                <td>Blue 2</td>
+                                <td>Blue 3</td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
                 <!--END UPCOMING MATCHES-->
@@ -410,12 +452,25 @@
             $scope.current_match = {};
             $scope.server_status = 'off';
             $scope.prepared_match = false;
+			
+			$scope.red = {};
+			$scope.red.team1='';
+			$scope.red.team2='';
+			$scope.red.team3='';
+			
+			$scope.blue = {};
+			$scope.blue.team1='';
+			$scope.blue.team2='';
+			$scope.blue.team3='';
 
             $scope.stopTime = 'false';
 
-
-
-
+			$scope.match_type = 'p';
+			
+			$scope.changed_matchType = function(){
+				console.log('test');
+			}
+			
             i = 1;
             $scope.prepare_match = function (reset) {
                 if (reset == 1) {
@@ -562,14 +617,16 @@
                     } else {
                         $scope.stopTime = 'false';
                         console.log('stopped');
+						t = 0;
                         setTimeout(function () { $('#scouter_time').html('0:00'); }, 1000);
-                        $scope.next_match();
+                    
                     }
                 } else {
                     console.log('match');
                     t = 0;
                     $scope.prepare_match(1);
                     $('.start_button').text('Prepare this Match').css({ 'margin-left': '-29%' });
+                    $scope.next_match();
                 }
 
                 if (t >= 120) { m = 2; s = t - 120; } else { m = 0; s = t; }

@@ -287,7 +287,14 @@ io.on('connect',function(socket){
             }
             defenses[type + pos] = defenseType;
             i++;
+		
         });
+		pool.getConnection(function (err, connection) {
+			connection.query('UPDATE matches SET redD1="'+defenses.red1+'",redD2="'+defenses.red2+'",redD3="'+defenses.red3+'",redD4="'+defenses.red4+'",redD5="'+defenses.red5+'",blueD1="'+defenses.blue1+'",blueD2="'+defenses.blue2+'",blueD3="'+defenses.blue3+'",blueD4="'+defenses.blue4+'",blueD5="'+defenses.blue5+'" WHERE match_id="'+data.current_match.match_id+'"'), function (err, rows, fields) {
+				console.log(err);
+			}
+			connection.release();
+		});	
 
         //this has issues with double repeating
         active = false;

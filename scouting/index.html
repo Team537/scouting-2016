@@ -292,7 +292,7 @@ color: #fff;
             <div id="lightbox">
                 <div id="title">
                     <div ng-if="lb_change == 'climb'" id="title_container" style="float: left; width: 25%; height: 100%; border-right: thin solid #ccc;">
-                        <img style="position: absolute; left: 10px; bottom: 4px;" src="images/tower_png.png"" />
+                        <img style="position: absolute; left: 10px; bottom: 4px;" src="images/tower_png.png" />
                         <div style="left: 40px; top: 10px;">Tower</div>
                         <div style="left: 43px; top: 38px; font-size: 16px;">Final</div>
                     </div>
@@ -324,9 +324,6 @@ color: #fff;
                         <div ng-click="tower.climb = (tower.climb==false ? true : false); tower.challenge = false" ng-class="{'active': tower.climb, 'not_active': !tower.climb}" id="button">Climbed</div>
                         <div ng-click="tower.challenge = (tower.challenge==false ? true : false); tower.climb = false" ng-class="{'active': tower.challenge, 'not_active': !tower.challenge}" id="button">Challenged</div>
 
-                        <div ng-class="{'active': tower.left, 'not_active': !tower.left}" style="font-size: 17px; float: left; margin-right: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-right: 1px solid #ccc;" id="button">Left</div>
-                        <div ng-class="{'active': tower.front, 'not_active': !tower.front}" style="font-size: 17px; border-radius: 0px; float: left; margin-right: 0px; margin-left: 0px;" id="button">Front</div>
-                        <div ng-class="{'active': tower.right, 'not_active': !tower.right}" style="font-size: 17px; float: left; margin-left: 0px; border-bottom-left-radius: 0px; border-top-left-radius: 0px; border-left: 1px solid #ccc;" id="button">Right</div>
                     </div>
 
                     <div ng-if="lb_change !== 'climb'" style="width: 25%; border-right: thin solid #333; float: left; height: 230px;" id="column">
@@ -560,7 +557,7 @@ color: #fff;
                 console.log(data.response.defenses);
                 //setTime to default
                 $('#scouter_time').html('0:00');
-                $('#time-bar').css({ 'width': $scope.t * bar_width + 'px' });
+                $('#time-bar').css({ 'width': '0px' });
                 $('#time-bar').attr({ 'class': 'green' });
                 $scope.t = 0;
             });
@@ -597,13 +594,13 @@ color: #fff;
                         
                         console.log('stopped');
                         setTimeout(function () { $('#scouter_time').html('0:00'); $scope.stopTime = 'false'; }, 1000);
-                       // $scope.t = 0;
+                       $scope.t = 0;
                         console.log($scope.t);
                     }
                 } else {
                     console.log('match');
                     $('.donezo_button').css({ 'display': 'block' });
-                    $scope.t = 0;
+                    //$scope.t = 0;
                 }
 
                 if ($scope.t >= 120) { m = 2; s = $scope.t - 120; } else { m = 0; s = $scope.t; }
@@ -617,9 +614,12 @@ color: #fff;
                 $('#scouter_time').html(m + ':' + s);
                 
                 //console.log($scope.t * bar_width);
-                $('#time-bar').animate({ 'width': $scope.t * bar_width + 'px' }, 1001);
+                if ($scope.t < 145) {
+                    $('#time-bar').animate({ 'width': $scope.t * bar_width + 'px' }, 1001);
+                }
+                
                 if ($scope.t >= 120) { $('#time-bar').attr({ 'class': 'yellow' }); }
-                if ($scope.t >= 150) { $('#time-bar').attr({ 'class': 'red' }); }
+                if ($scope.t == 150) { $('#time-bar').css({ 'width': '1024px' }); $('#time-bar').attr({ 'class': 'red' }); }
                 $scope.formmatedTime = $scope.t;
                 $scope.t++;
             }
@@ -662,7 +662,11 @@ color: #fff;
             }
 
             socket.on('scouter_disconnect',function(data){
-                 console.log(data);
+				$('#login_inputs').css({'display':'block'});
+				$('#title_screen').animate({'height':'250px'},700);
+				$scope.waiting = false;
+				$scope.first_name = "";
+				$scope.last_name = "";
             });
 
 
