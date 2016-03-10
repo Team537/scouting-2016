@@ -392,7 +392,7 @@
                             <input ng-model="red.team2" type="text" />
                             <input ng-model="red.team3" type="text" />
                         </div>
-                        <div style="width: 33%; float: left;"> <div style="margin-left: 55px; margin-top: 20px;" id="button">Add</div> </div>
+                        <div style="width: 33%; float: left;"> <div ng-click="add_match()" style="margin-left: 55px; margin-top: 46px;" id="button">Add</div> </div>
                         <div style="width: 33%; float: left;">
                         	<h4 style="color: blue; text-align: center; margin-bottom: 10px; font-size: 20px;">Blue Alliance</h4>
                         	<input ng-model="blue.team1" type="text" />
@@ -465,10 +465,18 @@
 
             $scope.stopTime = 'false';
 
-			$scope.match_type = 'p';
+			$scope.match_type = 'q';
 			
 			$scope.changed_matchType = function(){
-				console.log('test');
+			    console.log('test');
+			    socket.emit('GetCurrent_match', {'number':1,'match_type':$scope.match_type});
+			}
+			
+			//add match
+			$scope.add_match = function(){
+			    socket.emit('add_match', { 'red': $scope.red, 'blue': $scope.blue });
+			    $scope.red = {};
+			    $scope.blue = {};
 			}
 			
             i = 1;
@@ -517,7 +525,7 @@
 
             //next match
             $scope.next_match = function(){
-                socket.emit('prev_match',$scope.current_match.match_id+1);
+                socket.emit('prev_match', { 'number': $scope.current_match.match_number + 1, 'match_type': $scope.match_type });
             }
             //prev match
             $scope.prev_match = function(){
@@ -527,7 +535,7 @@
                         $('#current_matchnum').css({'text-shadow':'none'});
                     },900);
                 }else{
-                    socket.emit('prev_match',$scope.current_match.match_id-1);
+                    socket.emit('prev_match', { 'number': $scope.current_match.match_number - 1, 'match_type': $scope.match_type });
                 }
             }
 
@@ -536,6 +544,11 @@
                $scope.server_status = 'on';
             });
             //on response
+
+            socket.on('upcoming_matches', function (data) {
+                $scope.upcoming_matches = data;
+                console.log(data);
+            });
 
             socket.on('response',function(data){
                 console.log(data);

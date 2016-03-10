@@ -6,6 +6,11 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 var _ = require('underscore');
 
+/////change this later
+var event_code = '4';
+///////////////////////
+
+
 var connected_users = [];
 
 var mysql      = require('mysql');
@@ -25,10 +30,39 @@ function Shuffle(o) {
 
 io.on('connect',function(socket){
    console.log('connected'); 
-    
-   socket.on('GetCurrent_match', function (data) {
+   
+   socket.on('add_match', function (data) {
+       console.log(data);
        pool.getConnection(function (err, connection) {
-           connection.query('SELECT * FROM matches', function (err, rows, fields) {
+           connection.query('SELECT * FROM matches WHERE match_type="p" AND event_id = "' + event_code + '" ORDER BY match_id DESC LIMIT 1', function (err, rows, fields) {
+               console.log(rows);
+               if (rows.length > 0) {
+                   number = rows[0].match_number + 1;
+               } else {
+                   number = 1;
+               }
+               console.log(number);
+               connection.query('INSERT INTO matches (match_number,match_type,event_id,red1,red2,red3,blue1,blue2,blue3,starttime) VALUES(' + number + ',"p","' + event_code + '","' + data.red.team1 + '","' + data.red.team2 + '","' + data.red.team3 + '","' + data.blue.team1 + '","' + data.red.team2 + '","' + data.red.team3 + '","0")', function (err, rows, fields) {
+                   console.log(err);
+               });
+           });
+           connection.release();
+       });
+   });
+    
+   function upcoming_matches(matchNum, match_type) {
+       console.log('updating schedule '+matchNum);
+       pool.getConnection(function (err, connection) {
+           connection.query('SELECT * FROM matches WHERE event_id="' + event_code + '" AND match_type="' + match_type + '" LIMIT ' + matchNum + ',5', function (err, rows, fields) {
+               //console.log(rows);
+           });
+       });
+   }
+   socket.on('GetCurrent_match', function (data) {
+       console.log(data);
+       pool.getConnection(function (err, connection) {
+           connection.query('SELECT * FROM matches WHERE event_id="' + event_code + '" AND match_number="' + data.number + '" AND match_type="' + data.match_type + '"', function (err, rows, fields) {
+               upcoming_matches(data.number,data.match_type);
                if (err) throw err;
                io.to('admin').emit('response', { 'response': 'CurrentMatch', 'data': rows[0] });
                console.log('The solution is: ', rows[0]);
@@ -39,8 +73,8 @@ io.on('connect',function(socket){
     
     socket.on('next_match', function (data) {
         pool.getConnection(function (err, connection) {
-            connection.query('SELECT * FROM matches WHERE match_number="' + data + '"', function (err, rows, fields) {
-                connection.end();
+            connection.query('SELECT * FROM matches WHERE match_number="' + data.number + '"AND match_type="' + data.match_type + '"', function (err, rows, fields) {
+                upcoming_matches(data.number, data.match_type);
                 if (err) throw err;
                 if (rows[0] !== undefined) {
                     io.to('admin').emit('response', { 'response': 'NextMatch', 'data': rows[0] });
@@ -54,8 +88,9 @@ io.on('connect',function(socket){
     });
     socket.on('prev_match', function (data) {
         pool.getConnection(function (err, connection) {
-            connection.query('SELECT * FROM matches WHERE match_number="' + data + '"', function (err, rows, fields) {
+            connection.query('SELECT * FROM matches WHERE match_number="' + data.number + '" AND match_type="' + data.match_type + '"', function (err, rows, fields) {
                 if (err) throw err;
+                upcoming_matches(data.number, data.match_type);
                 io.to('admin').emit('response', { 'response': 'NextMatch', 'data': rows[0] });
                 console.log('The solution is: ', rows[0]);
                 connection.release();
