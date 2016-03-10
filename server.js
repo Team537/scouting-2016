@@ -19,7 +19,7 @@ var mysql      = require('mysql');
 var pool  = mysql.createPool({
 	host: "localhost",
 	user: "root",
-	password: "Robos5372317!",
+	password: "",
 	database: "scouting2016"
 });
 
@@ -42,7 +42,7 @@ io.on('connect',function(socket){
                    number = 1;
                }
                console.log(number);
-               connection.query('INSERT INTO matches (match_number,match_type,event_id,red1,red2,red3,blue1,blue2,blue3,starttime) VALUES(' + number + ',"p","' + event_code + '","' + data.red.team1 + '","' + data.red.team2 + '","' + data.red.team3 + '","' + data.blue.team1 + '","' + data.red.team2 + '","' + data.red.team3 + '","0")', function (err, rows, fields) {
+               connection.query('INSERT INTO matches (match_number,match_type,event_id,red1,red2,red3,blue1,blue2,blue3) VALUES(' + number + ',"p","' + event_code + '","' + data.red.team1 + '","' + data.red.team2 + '","' + data.red.team3 + '","' + data.blue.team1 + '","' + data.red.team2 + '","' + data.red.team3 + '")', function (err, rows, fields) {
                    console.log(err);
                });
            });
