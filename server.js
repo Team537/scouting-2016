@@ -55,6 +55,7 @@ io.on('connect',function(socket){
        pool.getConnection(function (err, connection) {
            connection.query('SELECT * FROM matches WHERE event_id="' + event_code + '" AND match_type="' + match_type + '" LIMIT ' + matchNum + ',5', function (err, rows, fields) {
                //console.log(rows);
+               connection.release();
            });
        });
    }
@@ -66,12 +67,14 @@ io.on('connect',function(socket){
                if (err) throw err;
                io.to('admin').emit('response', { 'response': 'CurrentMatch', 'data': rows[0] });
                console.log('The solution is: ', rows[0]);
+               connection.release();
            });
-           connection.release();
+           
        });
     });
     
-    socket.on('next_match', function (data) {
+   socket.on('next_match', function (data) {
+       console.log('Next');
         pool.getConnection(function (err, connection) {
             connection.query('SELECT * FROM matches WHERE match_number="' + data.number + '"AND match_type="' + data.match_type + '"', function (err, rows, fields) {
                 upcoming_matches(data.number, data.match_type);
@@ -82,8 +85,8 @@ io.on('connect',function(socket){
                     io.to('admin').emit('response', { 'response': 'NextMatch', 'data': 'null' });
                 }
                 console.log('The solution is: ', rows[0]);
+                connection.release();
             });
-            connection.release();
         });
     });
     socket.on('prev_match', function (data) {

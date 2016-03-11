@@ -240,7 +240,7 @@
                         	<select ng-model="match_type" ng-change="changed_matchType()" style="font-size: 20px;">
                             	<option value="p">Practice Matches</option>
                                 <option value="q">Qualifications</option>
-                                <option value="e">Playoffs</optgroup>
+                                <option value="e">Playoffs</option>
                             </select>
                             <h1 id="current_matchnum" style="text-align: center; font-size: 100px; margin: 0px; padding: 0;">{{ current_match.match_number }}</h1>
                         </div>
@@ -525,7 +525,7 @@
 
             //next match
             $scope.next_match = function(){
-                socket.emit('prev_match', { 'number': $scope.current_match.match_number + 1, 'match_type': $scope.match_type });
+                socket.emit('next_match', { 'number': $scope.current_match.match_number + 1, 'match_type': $scope.match_type });
             }
             //prev match
             $scope.prev_match = function(){
@@ -610,7 +610,7 @@
             });
 
             socket.emit('subscribe','admin');
-            socket.emit('GetCurrent_match','test');
+            socket.emit('GetCurrent_match', { 'number': 1, 'match_type': 'q' });
 
 
             $scope.logout = function(id){
